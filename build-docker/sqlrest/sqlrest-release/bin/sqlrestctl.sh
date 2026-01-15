@@ -26,7 +26,10 @@ echo "Base Directory:${APP_HOME}"
 export APP_DRIVERS_PATH=$APP_HOME/drivers
 
 # JVM parameters can be set here
-JVMFLAGS="-server -Xms1024m -Xmx1024m -Xmn1024m -XX:+DisableExplicitGC -Djava.awt.headless=true -Dfile.encoding=UTF-8 "
+# Use JVMFLAGS from environment variable if set, otherwise use default
+if [ -z "$JVMFLAGS" ]; then
+  JVMFLAGS="-server -Xms1024m -Xmx1024m -Xmn1024m -XX:+DisableExplicitGC -Djava.awt.headless=true -Dfile.encoding=UTF-8 "
+fi
 
 if [ "$JAVA_HOME" != "" ]; then
   JAVA="$JAVA_HOME/bin/java"

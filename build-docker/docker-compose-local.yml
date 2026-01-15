@@ -58,6 +58,8 @@ services:
       SQLREST_CACHE_REDIS_HOST: redis
       SQLREST_CACHE_REDIS_PORT: "6379"
       SQLREST_CACHE_REDIS_DATABASE: "0"
+      JVMFLAGS: "-server -Xms2048m -Xmx2048m -Xmn1024m -XX:+DisableExplicitGC -XX:+UseG1GC -XX:MaxGCPauseMillis=200 -Djava.awt.headless=true -Dfile.encoding=UTF-8"
+      JAVA_TOOL_OPTIONS: "-server -Xms2048m -Xmx2048m -Xmn1024m -XX:+DisableExplicitGC -XX:+UseG1GC -XX:MaxGCPauseMillis=200 -Djava.awt.headless=true -Dfile.encoding=UTF-8"
     ports:
       - "8090:8090"
     volumes:
@@ -91,6 +93,8 @@ services:
       SQLREST_CACHE_REDIS_HOST: redis
       SQLREST_CACHE_REDIS_PORT: "6379"
       SQLREST_CACHE_REDIS_DATABASE: "0"
+      JVMFLAGS: "-server -Xms2048m -Xmx2048m -Xmn1024m -XX:+DisableExplicitGC -XX:+UseG1GC -XX:MaxGCPauseMillis=200 -Djava.awt.headless=true -Dfile.encoding=UTF-8"
+      JAVA_TOOL_OPTIONS: "-server -Xms2048m -Xmx2048m -Xmn1024m -XX:+DisableExplicitGC -XX:+UseG1GC -XX:MaxGCPauseMillis=200 -Djava.awt.headless=true -Dfile.encoding=UTF-8"
     ports:
       - "8092:8092"
     volumes:
@@ -126,6 +130,8 @@ services:
       SQLREST_CACHE_REDIS_HOST: redis
       SQLREST_CACHE_REDIS_PORT: "6379"
       SQLREST_CACHE_REDIS_DATABASE: "0"
+      JVMFLAGS: "-server -Xms2048m -Xmx2048m -Xmn1024m -XX:+DisableExplicitGC -XX:+UseG1GC -XX:MaxGCPauseMillis=200 -Djava.awt.headless=true -Dfile.encoding=UTF-8"
+      JAVA_TOOL_OPTIONS: "-server -Xms2048m -Xmx2048m -Xmn1024m -XX:+DisableExplicitGC -XX:+UseG1GC -XX:MaxGCPauseMillis=200 -Djava.awt.headless=true -Dfile.encoding=UTF-8"
     volumes:
       - /tmp:/tmp
     depends_on:
@@ -159,6 +165,8 @@ services:
       SQLREST_CACHE_REDIS_HOST: redis
       SQLREST_CACHE_REDIS_PORT: "6379"
       SQLREST_CACHE_REDIS_DATABASE: "0"
+      JVMFLAGS: "-server -Xms1024m -Xmx1024m -Xmn512m -XX:+DisableExplicitGC -XX:+UseG1GC -XX:MaxGCPauseMillis=200 -Djava.awt.headless=true -Dfile.encoding=UTF-8"
+      JAVA_TOOL_OPTIONS: "-server -Xms1024m -Xmx1024m -Xmn512m -XX:+DisableExplicitGC -XX:+UseG1GC -XX:MaxGCPauseMillis=200 -Djava.awt.headless=true -Dfile.encoding=UTF-8"
     ports:
       - "8091:8091"
     volumes:
@@ -194,6 +202,8 @@ services:
       SQLREST_CACHE_REDIS_HOST: redis
       SQLREST_CACHE_REDIS_PORT: "6379"
       SQLREST_CACHE_REDIS_DATABASE: "0"
+      JVMFLAGS: "-server -Xms1024m -Xmx1024m -Xmn512m -XX:+DisableExplicitGC -XX:+UseG1GC -XX:MaxGCPauseMillis=200 -Djava.awt.headless=true -Dfile.encoding=UTF-8"
+      JAVA_TOOL_OPTIONS: "-server -Xms1024m -Xmx1024m -Xmn512m -XX:+DisableExplicitGC -XX:+UseG1GC -XX:MaxGCPauseMillis=200 -Djava.awt.headless=true -Dfile.encoding=UTF-8"
     volumes:
       - /tmp:/tmp
     depends_on:
