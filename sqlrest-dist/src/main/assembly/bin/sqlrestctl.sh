@@ -63,7 +63,7 @@ export SQLREST_GATEWAY_URL=$(get_config_value "SQLREST_GATEWAY_URL" "${APP_CONF_
 # JVM parameters can be set here
 # Use JVMFLAGS from environment variable if set, otherwise use default
 if [ -z "$JVMFLAGS" ]; then
-  JVMFLAGS="-server -Xms1024m -Xmx1024m -Xmn1024m -XX:+DisableExplicitGC -Djava.awt.headless=true -Dfile.encoding=UTF-8 "
+  JVMFLAGS="-Xms1024m -Xmx1024m -Xmn1024m -XX:+DisableExplicitGC -Djava.awt.headless=true -Dfile.encoding=UTF-8 "
 fi
 
 if [ "$JAVA_HOME" != "" ]; then

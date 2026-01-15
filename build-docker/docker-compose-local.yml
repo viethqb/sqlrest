@@ -23,12 +23,13 @@ services:
   redis:
     container_name: sqlrest_redis
     image: redis:7-alpine
+    command: redis-server --requirepass 123456
     ports:
       - "6379:6379"
     volumes:
       - sqlrest_redis_data:/data
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: ["CMD", "redis-cli", "-a", "123456", "ping"]
       interval: 10s
       timeout: 3s
       retries: 60
@@ -57,9 +58,9 @@ services:
       SQLREST_CACHE_REDIS_ENABLED: "true"
       SQLREST_CACHE_REDIS_HOST: redis
       SQLREST_CACHE_REDIS_PORT: "6379"
+      SQLREST_CACHE_REDIS_PASSWORD: "123456"
       SQLREST_CACHE_REDIS_DATABASE: "0"
-      JVMFLAGS: "-server -Xms2048m -Xmx2048m -Xmn1024m -XX:+DisableExplicitGC -XX:+UseG1GC -XX:MaxGCPauseMillis=200 -Djava.awt.headless=true -Dfile.encoding=UTF-8"
-      JAVA_TOOL_OPTIONS: "-server -Xms2048m -Xmx2048m -Xmn1024m -XX:+DisableExplicitGC -XX:+UseG1GC -XX:MaxGCPauseMillis=200 -Djava.awt.headless=true -Dfile.encoding=UTF-8"
+      JVMFLAGS: "-Xms2048m -Xmx2048m -Xmn1024m -XX:+DisableExplicitGC -XX:+UseG1GC -XX:MaxGCPauseMillis=200 -Djava.awt.headless=true -Dfile.encoding=UTF-8"
     ports:
       - "8090:8090"
     volumes:
@@ -92,9 +93,9 @@ services:
       SQLREST_CACHE_REDIS_ENABLED: "true"
       SQLREST_CACHE_REDIS_HOST: redis
       SQLREST_CACHE_REDIS_PORT: "6379"
+      SQLREST_CACHE_REDIS_PASSWORD: "123456"
       SQLREST_CACHE_REDIS_DATABASE: "0"
-      JVMFLAGS: "-server -Xms2048m -Xmx2048m -Xmn1024m -XX:+DisableExplicitGC -XX:+UseG1GC -XX:MaxGCPauseMillis=200 -Djava.awt.headless=true -Dfile.encoding=UTF-8"
-      JAVA_TOOL_OPTIONS: "-server -Xms2048m -Xmx2048m -Xmn1024m -XX:+DisableExplicitGC -XX:+UseG1GC -XX:MaxGCPauseMillis=200 -Djava.awt.headless=true -Dfile.encoding=UTF-8"
+      JVMFLAGS: "-Xms2048m -Xmx2048m -Xmn1024m -XX:+DisableExplicitGC -XX:+UseG1GC -XX:MaxGCPauseMillis=200 -Djava.awt.headless=true -Dfile.encoding=UTF-8"
     ports:
       - "8092:8092"
     volumes:
@@ -129,9 +130,9 @@ services:
       SQLREST_CACHE_REDIS_ENABLED: "true"
       SQLREST_CACHE_REDIS_HOST: redis
       SQLREST_CACHE_REDIS_PORT: "6379"
+      SQLREST_CACHE_REDIS_PASSWORD: "123456"
       SQLREST_CACHE_REDIS_DATABASE: "0"
-      JVMFLAGS: "-server -Xms2048m -Xmx2048m -Xmn1024m -XX:+DisableExplicitGC -XX:+UseG1GC -XX:MaxGCPauseMillis=200 -Djava.awt.headless=true -Dfile.encoding=UTF-8"
-      JAVA_TOOL_OPTIONS: "-server -Xms2048m -Xmx2048m -Xmn1024m -XX:+DisableExplicitGC -XX:+UseG1GC -XX:MaxGCPauseMillis=200 -Djava.awt.headless=true -Dfile.encoding=UTF-8"
+      JVMFLAGS: "-Xms2048m -Xmx2048m -Xmn1024m -XX:+DisableExplicitGC -XX:+UseG1GC -XX:MaxGCPauseMillis=200 -Djava.awt.headless=true -Dfile.encoding=UTF-8"
     volumes:
       - /tmp:/tmp
     depends_on:
@@ -164,9 +165,9 @@ services:
       SQLREST_CACHE_REDIS_ENABLED: "true"
       SQLREST_CACHE_REDIS_HOST: redis
       SQLREST_CACHE_REDIS_PORT: "6379"
+      SQLREST_CACHE_REDIS_PASSWORD: "123456"
       SQLREST_CACHE_REDIS_DATABASE: "0"
-      JVMFLAGS: "-server -Xms1024m -Xmx1024m -Xmn512m -XX:+DisableExplicitGC -XX:+UseG1GC -XX:MaxGCPauseMillis=200 -Djava.awt.headless=true -Dfile.encoding=UTF-8"
-      JAVA_TOOL_OPTIONS: "-server -Xms1024m -Xmx1024m -Xmn512m -XX:+DisableExplicitGC -XX:+UseG1GC -XX:MaxGCPauseMillis=200 -Djava.awt.headless=true -Dfile.encoding=UTF-8"
+      JVMFLAGS: "-Xms1024m -Xmx1024m -Xmn512m -XX:+DisableExplicitGC -XX:+UseG1GC -XX:MaxGCPauseMillis=200 -Djava.awt.headless=true -Dfile.encoding=UTF-8"
     ports:
       - "8091:8091"
     volumes:
@@ -201,9 +202,9 @@ services:
       SQLREST_CACHE_REDIS_ENABLED: "true"
       SQLREST_CACHE_REDIS_HOST: redis
       SQLREST_CACHE_REDIS_PORT: "6379"
+      SQLREST_CACHE_REDIS_PASSWORD: "123456"
       SQLREST_CACHE_REDIS_DATABASE: "0"
-      JVMFLAGS: "-server -Xms1024m -Xmx1024m -Xmn512m -XX:+DisableExplicitGC -XX:+UseG1GC -XX:MaxGCPauseMillis=200 -Djava.awt.headless=true -Dfile.encoding=UTF-8"
-      JAVA_TOOL_OPTIONS: "-server -Xms1024m -Xmx1024m -Xmn512m -XX:+DisableExplicitGC -XX:+UseG1GC -XX:MaxGCPauseMillis=200 -Djava.awt.headless=true -Dfile.encoding=UTF-8"
+      JVMFLAGS: "-Xms1024m -Xmx1024m -Xmn512m -XX:+DisableExplicitGC -XX:+UseG1GC -XX:MaxGCPauseMillis=200 -Djava.awt.headless=true -Dfile.encoding=UTF-8"
     volumes:
       - /tmp:/tmp
     depends_on:
