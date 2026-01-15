@@ -1,20 +1,18 @@
 version: '3.8'
 services:
-  mysqldb:
-    container_name: sqlrest_mysqldb
-    image: mysql:5.7
+  postgresdb:
+    container_name: sqlrest_postgresdb
+    image: postgres:16
     environment:
-      MYSQL_DATABASE: sqlrest
-      MYSQL_USER: sqlrest
-      MYSQL_PASSWORD: 123456
-      MYSQL_ROOT_PASSWORD: 123456
-      MYSQL_ROOT_HOST: '%'
+      POSTGRES_DB: sqlrest
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123456
     ports:
-      - "3306:3306"
+      - "5432:5432"
     volumes:
-      - sqlrest_mysql_data:/var/lib/mysql
+      - sqlrest_postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p123456"]
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 10s
       timeout: 3s
       retries: 60
@@ -22,27 +20,52 @@ services:
     networks:
       - sqlrest-network
 
+  redis:
+    container_name: sqlrest_redis
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - sqlrest_redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 60
+      start_period: 10s
+    networks:
+      - sqlrest-network
+    restart: unless-stopped
+
   manager:
     container_name: sqlrest_manager
     image: sqlrest-manager:latest
     environment:
-      DB_TYPE: mysql
-      MYSQLDB_HOST: mysqldb
-      MYSQLDB_PORT: 3306
-      MYSQLDB_USERNAME: root
-      MYSQLDB_PASSWORD: 123456
-      MYSQLDB_NAME: sqlrest
+      DB_TYPE: postgres
+      PGDB_HOST: postgresdb
+      PGDB_PORT: 5432
+      PGDB_USERNAME: postgres
+      PGDB_PASSWORD: 123456
+      PGDB_NAME: sqlrest
       MANAGER_HOST: manager
       MANAGER_PORT: 8090
       EXECUTOR_PORT: 8092
       GATEWAY_PORT: 8091
       SQLREST_DS_ENCRYPT: false
+      SQLREST_GATEWAY_URL: http://localhost:8091
+      SQLREST_CACHE_HAZELCAST_ENABLED: "false"
+      SQLREST_CACHE_REDIS_ENABLED: "true"
+      SQLREST_CACHE_REDIS_HOST: redis
+      SQLREST_CACHE_REDIS_PORT: "6379"
+      SQLREST_CACHE_REDIS_DATABASE: "0"
     ports:
       - "8090:8090"
     volumes:
       - /tmp:/tmp
     depends_on:
-      mysqldb:
+      postgresdb:
+        condition: service_healthy
+      redis:
         condition: service_healthy
     networks:
       - sqlrest-network
@@ -52,23 +75,63 @@ services:
     container_name: sqlrest_executor
     image: sqlrest-executor:latest
     environment:
-      DB_TYPE: mysql
-      MYSQLDB_HOST: mysqldb
-      MYSQLDB_PORT: 3306
-      MYSQLDB_USERNAME: root
-      MYSQLDB_PASSWORD: 123456
-      MYSQLDB_NAME: sqlrest
+      DB_TYPE: postgres
+      PGDB_HOST: postgresdb
+      PGDB_PORT: 5432
+      PGDB_USERNAME: postgres
+      PGDB_PASSWORD: 123456
+      PGDB_NAME: sqlrest
       MANAGER_HOST: manager
       MANAGER_PORT: 8090
       EXECUTOR_PORT: 8092
       GATEWAY_PORT: 8091
       SQLREST_DS_ENCRYPT: false
+      SQLREST_CACHE_HAZELCAST_ENABLED: "false"
+      SQLREST_CACHE_REDIS_ENABLED: "true"
+      SQLREST_CACHE_REDIS_HOST: redis
+      SQLREST_CACHE_REDIS_PORT: "6379"
+      SQLREST_CACHE_REDIS_DATABASE: "0"
     ports:
       - "8092:8092"
     volumes:
       - /tmp:/tmp
     depends_on:
-      mysqldb:
+      postgresdb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      manager:
+        condition: service_started
+    networks:
+      - sqlrest-network
+    restart: unless-stopped
+
+  executor-2:
+    container_name: sqlrest_executor_2
+    image: sqlrest-executor:latest
+    environment:
+      DB_TYPE: postgres
+      PGDB_HOST: postgresdb
+      PGDB_PORT: 5432
+      PGDB_USERNAME: postgres
+      PGDB_PASSWORD: 123456
+      PGDB_NAME: sqlrest
+      MANAGER_HOST: manager
+      MANAGER_PORT: 8090
+      EXECUTOR_PORT: 8092
+      GATEWAY_PORT: 8091
+      SQLREST_DS_ENCRYPT: false
+      SQLREST_CACHE_HAZELCAST_ENABLED: "false"
+      SQLREST_CACHE_REDIS_ENABLED: "true"
+      SQLREST_CACHE_REDIS_HOST: redis
+      SQLREST_CACHE_REDIS_PORT: "6379"
+      SQLREST_CACHE_REDIS_DATABASE: "0"
+    volumes:
+      - /tmp:/tmp
+    depends_on:
+      postgresdb:
+        condition: service_healthy
+      redis:
         condition: service_healthy
       manager:
         condition: service_started
@@ -80,23 +143,63 @@ services:
     container_name: sqlrest_gateway
     image: sqlrest-gateway:latest
     environment:
-      DB_TYPE: mysql
-      MYSQLDB_HOST: mysqldb
-      MYSQLDB_PORT: 3306
-      MYSQLDB_USERNAME: root
-      MYSQLDB_PASSWORD: 123456
-      MYSQLDB_NAME: sqlrest
+      DB_TYPE: postgres
+      PGDB_HOST: postgresdb
+      PGDB_PORT: 5432
+      PGDB_USERNAME: postgres
+      PGDB_PASSWORD: 123456
+      PGDB_NAME: sqlrest
       MANAGER_HOST: manager
       MANAGER_PORT: 8090
       EXECUTOR_PORT: 8092
       GATEWAY_PORT: 8091
       SQLREST_DS_ENCRYPT: false
+      SQLREST_CACHE_HAZELCAST_ENABLED: "false"
+      SQLREST_CACHE_REDIS_ENABLED: "true"
+      SQLREST_CACHE_REDIS_HOST: redis
+      SQLREST_CACHE_REDIS_PORT: "6379"
+      SQLREST_CACHE_REDIS_DATABASE: "0"
     ports:
       - "8091:8091"
     volumes:
       - /tmp:/tmp
     depends_on:
-      mysqldb:
+      postgresdb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      manager:
+        condition: service_started
+    networks:
+      - sqlrest-network
+    restart: unless-stopped
+
+  gateway-2:
+    container_name: sqlrest_gateway_2
+    image: sqlrest-gateway:latest
+    environment:
+      DB_TYPE: postgres
+      PGDB_HOST: postgresdb
+      PGDB_PORT: 5432
+      PGDB_USERNAME: postgres
+      PGDB_PASSWORD: 123456
+      PGDB_NAME: sqlrest
+      MANAGER_HOST: manager
+      MANAGER_PORT: 8090
+      EXECUTOR_PORT: 8092
+      GATEWAY_PORT: 8091
+      SQLREST_DS_ENCRYPT: false
+      SQLREST_CACHE_HAZELCAST_ENABLED: "false"
+      SQLREST_CACHE_REDIS_ENABLED: "true"
+      SQLREST_CACHE_REDIS_HOST: redis
+      SQLREST_CACHE_REDIS_PORT: "6379"
+      SQLREST_CACHE_REDIS_DATABASE: "0"
+    volumes:
+      - /tmp:/tmp
+    depends_on:
+      postgresdb:
+        condition: service_healthy
+      redis:
         condition: service_healthy
       manager:
         condition: service_started
@@ -109,4 +212,5 @@ networks:
     driver: bridge
 
 volumes:
-  sqlrest_mysql_data:
+  sqlrest_postgres_data:
+  sqlrest_redis_data:
