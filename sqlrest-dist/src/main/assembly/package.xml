@@ -1,0 +1,292 @@
+<assembly>
+
+  <id>${project.version}</id>
+
+  <formats>
+    <format>tar.gz</format>
+  </formats>
+
+  <includeBaseDirectory>true</includeBaseDirectory>
+
+  <dependencySets>
+    <dependencySet>
+      <useProjectArtifact>true</useProjectArtifact>
+      <outputDirectory>lib</outputDirectory>
+      <excludes>
+        <!-- Exclude sqlrest-dist's own jar package -->
+        <exclude>org.dromara.sqlrest:sqlrest-dist</exclude>
+      </excludes>
+    </dependencySet>
+  </dependencySets>
+
+
+  <!-- Package bin directory from assembly to package directory/bin -->
+  <files>
+
+    <file>
+      <source>src/main/assembly/bin/sqlrestctl.sh</source>
+      <outputDirectory>bin</outputDirectory>
+      <lineEnding>unix</lineEnding>
+      <fileMode>0755</fileMode>
+    </file>
+    <file>
+      <source>src/main/assembly/bin/manager_startup.cmd</source>
+      <outputDirectory>bin</outputDirectory>
+      <lineEnding>dos</lineEnding>
+      <fileMode>0755</fileMode>
+    </file>
+    <file>
+      <source>src/main/assembly/bin/gateway_startup.cmd</source>
+      <outputDirectory>bin</outputDirectory>
+      <lineEnding>dos</lineEnding>
+      <fileMode>0755</fileMode>
+    </file>
+    <file>
+      <source>src/main/assembly/bin/executor_startup.cmd</source>
+      <outputDirectory>bin</outputDirectory>
+      <lineEnding>dos</lineEnding>
+      <fileMode>0755</fileMode>
+    </file>
+
+  </files>
+
+  <fileSets>
+
+    <!-- Create logs directory folder -->
+    <fileSet>
+      <directory>${project.basedir}</directory>
+      <outputDirectory>logs</outputDirectory>
+      <excludes>
+        <exclude>**/*</exclude>
+      </excludes>
+    </fileSet>
+
+    <!-- Create lib directory folder -->
+    <fileSet>
+      <directory>${project.basedir}</directory>
+      <outputDirectory>lib</outputDirectory>
+      <excludes>
+        <exclude>**/*</exclude>
+      </excludes>
+    </fileSet>
+
+    <!-- Create conf directory folder -->
+    <fileSet>
+      <directory>src/main/assembly/conf</directory>
+      <outputDirectory>conf</outputDirectory>
+      <lineEnding>unix</lineEnding>
+      <includes>
+        <include>*.ini</include>
+      </includes>
+    </fileSet>
+
+    <!-- Package configuration files from sqlrest-manager to package directory/conf/manager -->
+    <fileSet>
+      <directory>${project.parent.basedir}/sqlrest-manager/src/main/resources/
+      </directory>
+      <outputDirectory>conf/manager</outputDirectory>
+      <includes>
+        <include>*.yml</include>
+        <include>*.yaml</include>
+        <include>*.xml</include>
+      </includes>
+    </fileSet>
+
+    <!-- Package configuration files from sqlrest-executor to package directory/conf/executor -->
+    <fileSet>
+      <directory>${project.parent.basedir}/sqlrest-executor/src/main/resources
+      </directory>
+      <outputDirectory>conf/executor</outputDirectory>
+      <includes>
+        <include>*.yml</include>
+        <include>*.yaml</include>
+        <include>*.xml</include>
+      </includes>
+    </fileSet>
+
+    <!-- Package configuration files from sqlrest-gateway to package directory/conf/gateway -->
+    <fileSet>
+      <directory>${project.parent.basedir}/sqlrest-gateway/src/main/resources
+      </directory>
+      <outputDirectory>conf/gateway</outputDirectory>
+      <includes>
+        <include>*.yml</include>
+        <include>*.yaml</include>
+        <include>*.xml</include>
+      </includes>
+    </fileSet>
+
+    <!-- Package sqlrest-common jar files to package directory/lib -->
+    <fileSet>
+      <directory>${project.parent.basedir}/sqlrest-common/target
+      </directory>
+      <outputDirectory>lib/common</outputDirectory>
+      <includes>
+        <include>*.jar</include>
+      </includes>
+    </fileSet>
+
+    <!-- Package sqlrest-template jar files to package directory/lib -->
+    <fileSet>
+      <directory>${project.parent.basedir}/sqlrest-template/target
+      </directory>
+      <outputDirectory>lib/common</outputDirectory>
+      <includes>
+        <include>*.jar</include>
+      </includes>
+    </fileSet>
+
+    <!-- Package sqlrest-persistence jar files to package directory/lib -->
+    <fileSet>
+      <directory>${project.parent.basedir}/sqlrest-persistence/target
+      </directory>
+      <outputDirectory>lib/common</outputDirectory>
+      <includes>
+        <include>*.jar</include>
+      </includes>
+    </fileSet>
+
+    <!-- Package sqlrest-core jar files to package directory/lib -->
+    <fileSet>
+      <directory>${project.parent.basedir}/sqlrest-core/target</directory>
+      <outputDirectory>lib/common</outputDirectory>
+      <includes>
+        <include>*.jar</include>
+      </includes>
+    </fileSet>
+
+    <!-- Package sqlrest-manager jar files to package directory/lib/{common,manager} -->
+    <fileSet>
+      <directory>${project.parent.basedir}/sqlrest-manager/target</directory>
+      <outputDirectory>lib/common</outputDirectory>
+      <excludes>
+        <exclude>sqlrest-manager-*.jar</exclude>
+        <exclude>liquibase-core-*.jar</exclude>
+        <exclude>spring-boot-starter-tomcat-*.jar</exclude>
+        <exclude>spring-boot-starter-web-*.jar</exclude>
+        <exclude>tomcat-embed-websocket-*.jar</exclude>
+        <exclude>tomcat-embed-core-*.jar</exclude>
+        <exclude>spring-webmvc-*.jar</exclude>
+        <exclude>spring-cloud-netflix-eureka-server-*.jar</exclude>
+        <exclude>spring-cloud-starter-netflix-eureka-server-*.jar</exclude>
+        <exclude>httpclient5-*.jar</exclude>
+        <exclude>httpcore5-*.jar</exclude>
+      </excludes>
+      <includes>
+        <include>*.jar</include>
+      </includes>
+    </fileSet>
+    <fileSet>
+      <directory>${project.parent.basedir}/sqlrest-manager/target</directory>
+      <outputDirectory>lib/webmvc</outputDirectory>
+      <includes>
+        <include>spring-boot-starter-tomcat-*.jar</include>
+        <include>spring-boot-starter-web-*.jar</include>
+        <include>tomcat-embed-websocket-*.jar</include>
+        <include>tomcat-embed-core-*.jar</include>
+        <include>spring-webmvc-*.jar</include>
+        <include>httpclient5-*.jar</include>
+        <include>httpcore5-*.jar</include>
+      </includes>
+    </fileSet>
+    <fileSet>
+      <directory>${project.parent.basedir}/sqlrest-manager/target</directory>
+      <outputDirectory>lib/manager</outputDirectory>
+      <includes>
+        <include>sqlrest-manager-*.jar</include>
+        <include>liquibase-core-*.jar</include>
+        <include>spring-cloud-netflix-eureka-server-*.jar</include>
+        <include>spring-cloud-starter-netflix-eureka-server-*.jar</include>
+      </includes>
+    </fileSet>
+
+    <!-- Package sqlrest-executor jar files to package directory/lib/{common,executor} -->
+    <fileSet>
+      <directory>${project.parent.basedir}/sqlrest-executor/target
+      </directory>
+      <outputDirectory>lib/common</outputDirectory>
+      <excludes>
+        <exclude>sqlrest-executor-*.jar</exclude>
+        <exclude>spring-boot-starter-tomcat-*.jar</exclude>
+        <exclude>spring-boot-starter-web-*.jar</exclude>
+        <exclude>tomcat-embed-websocket-*.jar</exclude>
+        <exclude>tomcat-embed-core-*.jar</exclude>
+        <exclude>spring-webmvc-*.jar</exclude>
+      </excludes>
+      <includes>
+        <include>*.jar</include>
+      </includes>
+    </fileSet>
+    <fileSet>
+      <directory>${project.parent.basedir}/sqlrest-executor/target</directory>
+      <outputDirectory>lib/webmvc</outputDirectory>
+      <includes>
+        <include>spring-boot-starter-tomcat-*.jar</include>
+        <include>spring-boot-starter-web-*.jar</include>
+        <include>tomcat-embed-websocket-*.jar</include>
+        <include>tomcat-embed-core-*.jar</include>
+        <include>spring-webmvc-*.jar</include>
+      </includes>
+    </fileSet>
+    <fileSet>
+      <directory>${project.parent.basedir}/sqlrest-executor/target
+      </directory>
+      <outputDirectory>lib/executor</outputDirectory>
+      <includes>
+        <include>sqlrest-executor-*.jar</include>
+      </includes>
+    </fileSet>
+
+    <!-- Package sqlrest-gateway jar files separately to directory/lib/{common,ext,gateway} -->
+    <fileSet>
+      <directory>${project.parent.basedir}/sqlrest-gateway/target
+      </directory>
+      <outputDirectory>lib/common</outputDirectory>
+      <excludes>
+        <exclude>sqlrest-gateway-*.jar</exclude>
+
+        <exclude>spring-boot-starter-tomcat-*.jar</exclude>
+        <exclude>spring-boot-starter-web-*.jar</exclude>
+        <exclude>tomcat-embed-websocket-*.jar</exclude>
+        <exclude>tomcat-embed-core-*.jar</exclude>
+        <exclude>spring-webmvc-*.jar</exclude>
+
+        <exclude>spring-boot-starter-webflux-*.jar</exclude>
+        <exclude>spring-webflux-*.jar</exclude>
+        <exclude>spring-cloud-starter-gateway-*.jar</exclude>
+        <exclude>spring-cloud-gateway-server-*.jar</exclude>
+      </excludes>
+      <includes>
+        <include>*.jar</include>
+      </includes>
+    </fileSet>
+    <fileSet>
+      <directory>${project.parent.basedir}/sqlrest-gateway/target
+      </directory>
+      <outputDirectory>lib/webflux</outputDirectory>
+      <includes>
+        <include>spring-boot-starter-webflux-*.jar</include>
+        <include>spring-webflux-*.jar</include>
+        <include>spring-cloud-starter-gateway-*.jar</include>
+        <include>spring-cloud-gateway-server-*.jar</include>
+      </includes>
+    </fileSet>
+    <fileSet>
+      <directory>${project.parent.basedir}/sqlrest-gateway/target
+      </directory>
+      <outputDirectory>lib/gateway</outputDirectory>
+      <includes>
+        <include>sqlrest-gateway-*.jar</include>
+      </includes>
+    </fileSet>
+
+    <!-- Package module drivers to package directory/drivers -->
+    <fileSet>
+      <directory>${project.parent.basedir}/drivers/
+      </directory>
+      <outputDirectory>drivers</outputDirectory>
+    </fileSet>
+
+  </fileSets>
+
+</assembly>

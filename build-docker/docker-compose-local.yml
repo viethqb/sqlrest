@@ -1,0 +1,112 @@
+version: '3.8'
+services:
+  mysqldb:
+    container_name: sqlrest_mysqldb
+    image: mysql:5.7
+    environment:
+      MYSQL_DATABASE: sqlrest
+      MYSQL_USER: sqlrest
+      MYSQL_PASSWORD: 123456
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_ROOT_HOST: '%'
+    ports:
+      - "3306:3306"
+    volumes:
+      - sqlrest_mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p123456"]
+      interval: 10s
+      timeout: 3s
+      retries: 60
+      start_period: 30s
+    networks:
+      - sqlrest-network
+
+  manager:
+    container_name: sqlrest_manager
+    image: sqlrest-manager:latest
+    environment:
+      DB_TYPE: mysql
+      MYSQLDB_HOST: mysqldb
+      MYSQLDB_PORT: 3306
+      MYSQLDB_USERNAME: root
+      MYSQLDB_PASSWORD: 123456
+      MYSQLDB_NAME: sqlrest
+      MANAGER_HOST: manager
+      MANAGER_PORT: 8090
+      EXECUTOR_PORT: 8092
+      GATEWAY_PORT: 8091
+      SQLREST_DS_ENCRYPT: false
+    ports:
+      - "8090:8090"
+    volumes:
+      - /tmp:/tmp
+    depends_on:
+      mysqldb:
+        condition: service_healthy
+    networks:
+      - sqlrest-network
+    restart: unless-stopped
+
+  executor:
+    container_name: sqlrest_executor
+    image: sqlrest-executor:latest
+    environment:
+      DB_TYPE: mysql
+      MYSQLDB_HOST: mysqldb
+      MYSQLDB_PORT: 3306
+      MYSQLDB_USERNAME: root
+      MYSQLDB_PASSWORD: 123456
+      MYSQLDB_NAME: sqlrest
+      MANAGER_HOST: manager
+      MANAGER_PORT: 8090
+      EXECUTOR_PORT: 8092
+      GATEWAY_PORT: 8091
+      SQLREST_DS_ENCRYPT: false
+    ports:
+      - "8092:8092"
+    volumes:
+      - /tmp:/tmp
+    depends_on:
+      mysqldb:
+        condition: service_healthy
+      manager:
+        condition: service_started
+    networks:
+      - sqlrest-network
+    restart: unless-stopped
+
+  gateway:
+    container_name: sqlrest_gateway
+    image: sqlrest-gateway:latest
+    environment:
+      DB_TYPE: mysql
+      MYSQLDB_HOST: mysqldb
+      MYSQLDB_PORT: 3306
+      MYSQLDB_USERNAME: root
+      MYSQLDB_PASSWORD: 123456
+      MYSQLDB_NAME: sqlrest
+      MANAGER_HOST: manager
+      MANAGER_PORT: 8090
+      EXECUTOR_PORT: 8092
+      GATEWAY_PORT: 8091
+      SQLREST_DS_ENCRYPT: false
+    ports:
+      - "8091:8091"
+    volumes:
+      - /tmp:/tmp
+    depends_on:
+      mysqldb:
+        condition: service_healthy
+      manager:
+        condition: service_started
+    networks:
+      - sqlrest-network
+    restart: unless-stopped
+
+networks:
+  sqlrest-network:
+    driver: bridge
+
+volumes:
+  sqlrest_mysql_data:

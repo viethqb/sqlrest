@@ -1,0 +1,190 @@
+// Copyright tang.  All rights reserved.
+// https://gitee.com/inrgihc/sqlrest
+//
+// Use of this source code is governed by a BSD-style license
+//
+// Author: tang (inrgihc@126.com)
+// Date : 2024/3/31
+// Location: beijing , china
+/////////////////////////////////////////////////////////////
+package org.dromara.sqlrest.manager.controller;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
+import org.dromara.sqlrest.common.consts.Constants;
+import org.dromara.sqlrest.common.dto.PageResult;
+import org.dromara.sqlrest.common.dto.ResultEntity;
+import org.dromara.sqlrest.common.enums.DataTypeFormatEnum;
+import org.dromara.sqlrest.common.enums.NamingStrategyEnum;
+import org.dromara.sqlrest.core.dto.ApiAssignmentBaseResponse;
+import org.dromara.sqlrest.core.dto.ApiAssignmentSaveRequest;
+import org.dromara.sqlrest.core.dto.ApiDebugExecuteRequest;
+import org.dromara.sqlrest.core.dto.ApiOnlineSearchRequest;
+import org.dromara.sqlrest.core.dto.AssignmentPublishRequest;
+import org.dromara.sqlrest.core.dto.AssignmentSearchRequest;
+import org.dromara.sqlrest.core.dto.NameValueBaseResponse;
+import org.dromara.sqlrest.core.dto.NameValueRemarkResponse;
+import org.dromara.sqlrest.core.service.ApiAssignmentService;
+import org.dromara.sqlrest.core.service.ExportImportService;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+
+@Api(tags = {"API Configuration API"})
+@RestController
+@RequestMapping(value = Constants.MANGER_API_V1 + "/assignment")
+public class ApiAssignmentController {
+
+  @Resource
+  private ApiAssignmentService apiAssignmentService;
+  @Resource
+  private ExportImportService exportImportService;
+
+  @ApiOperation(value = "Get autocomplete list")
+  @GetMapping(value = "/completions", produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResultEntity completions() {
+    return ResultEntity.success(apiAssignmentService.completions());
+  }
+
+  @ApiOperation(value = "Response attribute naming strategy")
+  @GetMapping(value = "/response-naming-strategy", produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResultEntity responseNamingStrategy() {
+    return ResultEntity.success(
+        Arrays.stream(NamingStrategyEnum.values())
+            .map(
+                e ->
+                    NameValueBaseResponse.builder()
+                        .key(e.name())
+                        .value(e.getDescription())
+                        .build()
+            ).collect(Collectors.toList())
+    );
+  }
+
+  @ApiOperation(value = "Response data type format")
+  @GetMapping(value = "/response-type-format", produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResultEntity responseTypeFormat() {
+    return ResultEntity.success(
+        Arrays.stream(DataTypeFormatEnum.values())
+            .map(
+                e ->
+                    NameValueRemarkResponse.builder()
+                        .key(e.name())
+                        .value(e.getDefault())
+                        .remark(e.getClassName())
+                        .build()
+            ).collect(Collectors.toList())
+    );
+  }
+
+  @ApiOperation(value = "Get input parameter list from SQL")
+  @PostMapping(value = "/parse", produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResultEntity parse(@RequestParam("sql") String sql) {
+    return ResultEntity.success(apiAssignmentService.parseSqlParams(sql));
+  }
+
+  @ApiOperation(value = "Debug API configuration")
+  @PostMapping(value = "/debug", produces = MediaType.APPLICATION_JSON_VALUE)
+  public void debug(@Valid @RequestBody ApiDebugExecuteRequest request, HttpServletResponse response)
+      throws IOException {
+    apiAssignmentService.debugExecute(request, response);
+  }
+
+  @ApiOperation(value = "Add API configuration")
+  @PostMapping(value = "/create", produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResultEntity create(@Valid @RequestBody ApiAssignmentSaveRequest request) {
+    Long id = apiAssignmentService.createAssignment(request);
+    return ResultEntity.success(id);
+  }
+
+  @ApiOperation(value = "Update API configuration")
+  @PostMapping(value = "/update", produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResultEntity update(@Valid @RequestBody ApiAssignmentSaveRequest request) {
+    apiAssignmentService.updateAssignment(request);
+    return ResultEntity.success();
+  }
+
+  @ApiOperation(value = "View API configuration")
+  @GetMapping(value = "/detail/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResultEntity detail(@PathVariable("id") Long id) {
+    return ResultEntity.success(apiAssignmentService.detailAssignment(id));
+  }
+
+  @ApiOperation(value = "Delete API configuration")
+  @DeleteMapping(value = "/delete/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResultEntity delete(@PathVariable("id") Long id) {
+    apiAssignmentService.deleteAssignment(id);
+    return ResultEntity.success();
+  }
+
+  @ApiOperation(value = "Query API configuration list")
+  @PostMapping(value = "/list", produces = MediaType.APPLICATION_JSON_VALUE)
+  public PageResult<ApiAssignmentBaseResponse> listAll(@RequestBody AssignmentSearchRequest request) {
+    return apiAssignmentService.listAll(request);
+  }
+
+  @ApiOperation(value = "Search online interfaces")
+  @PostMapping(value = "/search", produces = MediaType.APPLICATION_JSON_VALUE)
+  public PageResult<ApiAssignmentBaseResponse> search(@RequestBody ApiOnlineSearchRequest request) {
+    return apiAssignmentService.search(request);
+  }
+
+  @ApiOperation(value = "Batch update authorization groups")
+  @PostMapping(value = "/group/{groupId}", produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResultEntity updateGroup(@PathVariable("groupId") Long groupId, @RequestBody List<Long> ids) {
+    apiAssignmentService.updateGroup(groupId, ids);
+    return ResultEntity.success();
+  }
+
+  @ApiOperation(value = "Publish version")
+  @PutMapping(value = "/publish", produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResultEntity publish(@Valid @RequestBody AssignmentPublishRequest request) {
+    apiAssignmentService.publish(request);
+    return ResultEntity.success();
+  }
+
+  @ApiOperation(value = "Deploy")
+  @PutMapping(value = "/deploy/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResultEntity deploy(@PathVariable("id") Long id,
+      @RequestParam(value = "commitId", required = false) Long commitId) {
+    apiAssignmentService.deployAssignment(id, commitId);
+    return ResultEntity.success();
+  }
+
+  @ApiOperation(value = "Retire")
+  @PutMapping(value = "/retire/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResultEntity retire(@PathVariable("id") Long id) {
+    apiAssignmentService.retireAssignment(id);
+    return ResultEntity.success();
+  }
+
+  @ApiOperation(value = "Batch export API configurations")
+  @PostMapping(value = "/export", produces = MediaType.APPLICATION_JSON_VALUE)
+  public void exportAssignments(@Valid @NotEmpty @RequestBody List<Long> ids, HttpServletResponse response) {
+    exportImportService.exportAssignments(ids, response);
+  }
+
+  @ApiOperation(value = "Batch import API configurations")
+  @PostMapping(value = "/import", produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResultEntity<String> importAssignments(@RequestPart(value = "file") MultipartFile file) throws IOException {
+    exportImportService.importAssignments(file);
+    return ResultEntity.success();
+  }
+}

@@ -1,0 +1,65 @@
+server:
+  port: ${EXECUTOR_PORT}
+spring:
+  profiles:
+    include: ${DB_TYPE}
+  application:
+    name: sqlrest-executor
+  main:
+    allow-bean-definition-overriding: false
+
+sqlrest:
+  executor:
+    print-sql-log: false
+  datasource:
+    encrypt: ${SQLREST_DS_ENCRYPT:false}
+  cache:
+    hazelcast:
+      enabled: true
+    redis:
+      enabled: false
+      host: 127.0.0.1
+      port: 6379
+      password: 123456
+      database: 0
+
+mybatis:
+  configuration:
+    lazy-loading-enabled: true
+    aggressive-lazy-loading: false
+    map-underscore-to-camel-case: true
+    #log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+mybatis-plus:
+  global-config:
+    banner: false
+
+logging:
+  config: classpath:logback-executor.xml
+
+eureka:
+  instance:
+    prefer-ip-address: true
+    secure-port-enabled: false
+    non-secure-port-enabled: true
+    lease-renewal-interval-in-seconds: 5
+    lease-expiration-duration-in-seconds: 10
+  client:
+    healthcheck:
+      enabled: true
+    registry-fetch-interval-seconds: 5
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://${MANAGER_HOST}:${MANAGER_PORT}/eureka/
+
+springfox:
+  documentation:
+    enabled: true
+    auto-startup: false
+    swagger-ui:
+      enabled: false
+
+
+datasource:
+  driver:
+    base-path: ${APP_DRIVERS_PATH}

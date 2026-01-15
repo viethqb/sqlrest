@@ -1,0 +1,64 @@
+server:
+  port: ${MANAGER_PORT}
+spring:
+  profiles:
+    include: ${DB_TYPE:mysql}
+  application:
+    name: sqlrest-manager
+  mvc:
+    throw-exception-if-no-handler-found: false
+    static-path-pattern: /**
+
+sqlrest:
+  manager:
+    swagger:
+      enable: false
+  url:
+    gateway: ${SQLREST_GATEWAY_URL:}
+    manager: ${SQLREST_MANAGER_URL:}
+  datasource:
+    encrypt: ${SQLREST_DS_ENCRYPT:false}
+  cache:
+    hazelcast:
+      enabled: true
+    redis:
+      enabled: false
+      host: 127.0.0.1
+      port: 6379
+      password: 123456
+      database: 0
+
+mybatis:
+  configuration:
+    lazy-loading-enabled: true
+    aggressive-lazy-loading: false
+    map-underscore-to-camel-case: true
+    #log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+mybatis-plus:
+  global-config:
+    banner: false
+
+logging:
+  config: classpath:logback-manager.xml
+
+eureka:
+  dashboard:
+    enabled: false
+    path: /dashboard
+  instance:
+    ip-address: ${MANAGER_HOST}
+    prefer-ip-address: true
+    secure-port-enabled: false
+    non-secure-port-enabled: true
+    lease-renewal-interval-in-seconds: 5
+    lease-expiration-duration-in-seconds: 10
+  client:
+    registry-fetch-interval-seconds: 5
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://${MANAGER_HOST}:${MANAGER_PORT}/eureka/
+
+datasource:
+  driver:
+    base-path: ${APP_DRIVERS_PATH}
