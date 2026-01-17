@@ -1,5 +1,6 @@
 <template>
   <div>
+    <h1 class="page-title">ALARM CONFIG</h1>
     <el-card>
       <el-form label-width="200px">
         <el-form-item label="Alarm Configuration">

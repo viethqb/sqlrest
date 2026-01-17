@@ -1,11 +1,12 @@
 <template>
   <div>
+    <h1 class="page-title">CLIENT APPLICATION</h1>
     <el-card>
       <div class="client-list-top">
         <div class="left-search-input-group">
           <div class="left-search-input">
             <el-select v-model="groupId"
-                       size="mini"
+                       size="small"
                        @change="searchByKeyword"
                        :clearable="true"
                        style="width:200px"
@@ -16,24 +17,22 @@
                          :value="item.id"></el-option>
             </el-select>
             <el-input placeholder="Please enter name keyword to search"
-                      size="mini"
+                      size="small"
                       v-model="keyword"
                       @change="searchByKeyword"
                       :clearable=true
-                      style="width:300px">
+                      style="width:400px">
             </el-input>
           </div>
         </div>
         <div class="right-add-button-group">
           <el-button type="primary"
-                     size="mini"
-                     icon="el-icon-document-add"
+                     size="small"
                      @click="addClient">Add</el-button>
         </div>
       </div>
 
-      <el-table :header-cell-style="{background:'#eef1f6',color:'#606266'}"
-                :data="tableData"
+      <el-table :data="tableData"
                 size="small"
                 border>
         <el-table-column prop="id"
@@ -42,24 +41,30 @@
         <el-table-column prop="name"
                          label="Application Name"
                          show-overflow-tooltip
-                         min-width="20%"></el-table-column>
+                         min-width="18%"></el-table-column>
         <el-table-column prop="description"
                          label="Description"
                          show-overflow-tooltip
-                         min-width="10%"></el-table-column>
-        <el-table-column prop="appKey"
-                         label="Application Account"
-                         show-overflow-tooltip
                          min-width="12%"></el-table-column>
+        <el-table-column prop="appKey"
+                         min-width="15%">
+          <template slot="header">
+            <span style="white-space: nowrap;">Application Account</span>
+          </template>
+          <template slot-scope="scope">
+            <span :title="scope.row.appKey">{{ scope.row.appKey }}</span>
+          </template>
+        </el-table-column>
         <el-table-column prop="expireDuration"
                          label="Expiration Time"
                          :formatter="stringFormatExpireDuration"
                          show-overflow-tooltip
-                         min-width="18%"></el-table-column>
+                         min-width="15%"></el-table-column>
         <el-table-column prop="isExpired"
                          label="Expired"
                          show-overflow-tooltip
-                         min-width="10%">
+                         min-width="8%"
+                         align="center">
           <template slot-scope="scope">
             <el-tag v-if="scope.row.isExpired"
                     type="danger"
@@ -77,31 +82,30 @@
                          label="Token Lifetime"
                          :formatter="stringFormatTokenAlive"
                          show-overflow-tooltip
-                         min-width="18%"></el-table-column>
+                         min-width="12%"></el-table-column>
         <el-table-column prop="createTime"
                          label="Create Time"
-                         min-width="18%">
+                         min-width="15%">
         </el-table-column>
         <el-table-column label="Actions"
-                         min-width="35%">
+                         min-width="15%"
+                         align="center">
           <template slot-scope="scope">
-            <el-button-group>
-              <el-button size="small"
-                         type="danger"
-                         icon="el-icon-document"
-                         @click="handleAuthorize(scope.$index, scope.row)"
-                         round>Authorize</el-button>
-              <el-button size="small"
-                         type="warning"
-                         icon="el-icon-document"
-                         @click="handleShowSecret(scope.$index, scope.row)"
-                         round>Secret</el-button>
-              <el-button size="small"
-                         type="success"
-                         icon="el-icon-delete"
-                         @click="handleDelete(scope.$index, scope.row)"
-                         round>Delete</el-button>
-            </el-button-group>
+            <el-tooltip content="Authorize" placement="top" effect="dark">
+              <el-button plain size="mini" type="primary" @click="handleAuthorize(scope.$index, scope.row)" circle>
+                <i class="el-icon-lock"></i>
+              </el-button>
+            </el-tooltip>
+            <el-tooltip content="Secret" placement="top" effect="dark">
+              <el-button plain size="mini" type="info" @click="handleShowSecret(scope.$index, scope.row)" circle>
+                <i class="el-icon-view"></i>
+              </el-button>
+            </el-tooltip>
+            <el-tooltip content="Delete" placement="top" effect="dark">
+              <el-button plain size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)" circle>
+                <i class="el-icon-delete"></i>
+              </el-button>
+            </el-tooltip>
           </template>
         </el-table-column>
       </el-table>
@@ -121,7 +125,7 @@
                  :showClose="false"
                  :before-close="handleClose">
         <el-form :model="createform"
-                 size="mini"
+                 size="small"
                  status-icon
                  :rules="rules"
                  ref="createform">
@@ -131,6 +135,7 @@
                         prop="name"
                         style="width:85%">
             <el-input v-model="createform.name"
+                      size="small"
                       auto-complete="off"></el-input>
           </el-form-item>
           <el-form-item label="Description"
@@ -138,6 +143,7 @@
                         prop="description"
                         style="width:85%">
             <el-input type="textarea"
+                      size="small"
                       :rows="6"
                       :spellcheck="false"
                       placeholder="Please enter"
@@ -150,13 +156,15 @@
                         prop="appKey"
                         style="width:85%">
             <el-input v-model="createform.appKey"
+                      size="small"
                       auto-complete="off"></el-input>
           </el-form-item>
           <el-form-item label="Application Expiration Time"
                         label-width="120px"
                         prop="expireTime"
                         style="width:85%">
-            <el-select v-model="createform.expireTime">
+            <el-select v-model="createform.expireTime"
+                       size="small">
               <el-option label="Never"
                          value="EXPIRE_FOR_EVER"></el-option>
               <el-option label="Once"
@@ -189,7 +197,8 @@
                 <i class='el-icon-question' />
               </el-tooltip>
             </span>
-            <el-select v-model="createform.tokenAlive">
+            <el-select v-model="createform.tokenAlive"
+                       size="small">
               <el-option label="Short-term"
                          value="PERIOD"></el-option>
               <el-option label="Long-term"

@@ -1,5 +1,6 @@
 <template>
   <div>
+    <h1 class="page-title">MODULE CONFIG</h1>
     <el-card>
       <div class="group-list-top">
         <div class="left-search-input-group">
@@ -15,14 +16,12 @@
         </div>
         <div class="right-add-button-group">
           <el-button type="primary"
-                     size="mini"
-                     icon="el-icon-document-add"
+                     size="small"
                      @click="addGroup">Add</el-button>
         </div>
       </div>
 
-      <el-table :header-cell-style="{background:'#eef1f6',color:'#606266'}"
-                :data="tableData"
+      <el-table :data="tableData"
                 size="small"
                 border>
         <el-table-column prop="id"
@@ -40,20 +39,18 @@
                          show-overflow-tooltip
                          min-width="20%"></el-table-column>
         <el-table-column label="Actions"
-                         min-width="35%">
+                         min-width="20%">
           <template slot-scope="scope">
-            <el-button-group>
-              <el-button size="small"
-                         type="warning"
-                         icon="el-icon-edit"
-                         @click="handleUpdate(scope.$index, scope.row)"
-                         round>Edit</el-button>
-              <el-button size="small"
-                         type="success"
-                         icon="el-icon-delete"
-                         @click="handleDelete(scope.$index, scope.row)"
-                         round>Delete</el-button>
-            </el-button-group>
+            <el-tooltip content="Edit" placement="top" effect="dark">
+              <el-button plain size="mini" type="warning" @click="handleUpdate(scope.$index, scope.row)" circle>
+                <i class="el-icon-edit"></i>
+              </el-button>
+            </el-tooltip>
+            <el-tooltip content="Delete" placement="top" effect="dark">
+              <el-button plain size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)" circle>
+                <i class="el-icon-delete"></i>
+              </el-button>
+            </el-tooltip>
           </template>
         </el-table-column>
       </el-table>

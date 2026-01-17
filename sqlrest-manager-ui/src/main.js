@@ -5,9 +5,11 @@ import App from './App'
 import router from './router'
 import axios from './assets/axios.js';
 import ElementUI from 'element-ui';
+import locale from 'element-ui/lib/locale/lang/en'
 import './assets/iconfont/iconfont.css'
 import './assets/dbicon/iconfont.css'
 import './assets/sysicon/iconfont.css'
+import './theme/index.css'
 import 'element-ui/lib/theme-chalk/index.css';
 import * as echarts from 'echarts'
 import VueCodeMirror from 'vue-codemirror'
@@ -16,7 +18,7 @@ import JsonViewer from 'vue-json-viewer'
 
 Vue.use(VueCodeMirror)
 Vue.use(axios)
-Vue.use(ElementUI)
+Vue.use(ElementUI, { locale })
 Vue.use(JsonViewer) 
 
 Vue.prototype.$http = axios

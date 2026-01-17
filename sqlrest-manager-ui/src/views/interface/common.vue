@@ -1,18 +1,7 @@
 <template>
   <el-card>
     <el-row>
-      <el-col :span="2">
-        <el-button type="primary"
-                   size="mini"
-                   @click="handleShowTree">
-          Metadata View
-          <i class="el-icon-d-arrow-left"
-             v-if="showTree"></i>
-          <i class="el-icon-d-arrow-right"
-             v-else></i>
-        </el-button>
-      </el-col>
-      <el-col :span="22">
+      <el-col :span="24">
         <div style="float:right">
           <el-button type="danger"
                      v-if="showVersionDetail"
@@ -60,32 +49,7 @@
       </el-col>
     </el-row>
     <el-row :gutter=2>
-      <el-col :span="4"
-              v-if="showTree">
-        <div class="grid-content bg-purple">
-          <el-select placeholder="Please select datasource"
-                     v-model="createParam.dataSourceId"
-                     @change="loadTreeData">
-            <el-option v-for="(item,index) in connectionList"
-                       :key="index"
-                       :label="`[${item.id}]${item.name}`"
-                       :value="item.id"></el-option>
-          </el-select>
-          <el-tree ref="tree"
-                   empty-text="Please select datasource to view"
-                   style="min-height: 500px; max-height: 800px; overflow: auto;"
-                   :indent=6
-                   :data="treeData"
-                   :props="props"
-                   :load="loadNode"
-                   :expand-on-click-node="true"
-                   :highlight-current="true"
-                   :render-content="renderContent"
-                   lazy>
-          </el-tree>
-        </div>
-      </el-col>
-      <el-col :span='showTree?20:24'>
+      <el-col :span="24">
         <div class="grid-content bg-purple">
           <el-form size="mini"
                    :model="createParam"
@@ -93,11 +57,143 @@
                    label-position='left'
                    ref="form">
             <el-tabs type="border-card"
-                     v-model="tabActiveName">
+                     v-model="tabActiveName"
+                     tab-position="left">
+              <el-tab-pane label="API Configuration"
+                           name="detail">
+                <el-row :gutter="20">
+                  <el-col :span="12">
+                    <el-form-item label="Path"
+                                  label-width="150px"
+                                  :required=true
+                                  prop="path">
+                      <el-input v-model="createParam.path"
+                                size="small"
+                                :disabled="isOnlyShowDetail || $route.query.id>0">
+                        <template slot="prepend">{{gatewayApiPrefix}}</template>
+                      </el-input>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="12">
+                    <el-form-item label="Method"
+                                  label-width="150px"
+                                  :required=true
+                                  prop="method">
+                      <el-select v-model="createParam.method"
+                                 size="small"
+                                 style="width: 400px;"
+                                 :disabled="isOnlyShowDetail || $route.query.id>0">
+                        <el-option label="GET"
+                                   value="GET"></el-option>
+                        <el-option label="PUT"
+                                   value="PUT"></el-option>
+                        <el-option label="POST"
+                                   value="POST"></el-option>
+                        <el-option label="DELETE"
+                                   value="DELETE"></el-option>
+                      </el-select>
+                    </el-form-item>
+                  </el-col>
+                </el-row>
+                <el-row :gutter="20">
+                  <el-col :span="12">
+                    <el-form-item label="Name"
+                                  label-width="150px"
+                                  :required=true
+                                  prop="name">
+                      <el-input v-model="createParam.name"
+                                auto-complete="off"
+                                size="small"
+                                style="width: 400px;"
+                                :disabled="isOnlyShowDetail"></el-input>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="12">
+                    <el-form-item label="Content Type"
+                                  label-width="150px"
+                                  :required=true
+                                  prop="contentType">
+                      <el-select v-model="createParam.contentType"
+                                 size="small"
+                                 style="width: 400px;"
+                                 :disabled="isOnlyShowDetail">
+                        <el-option v-for="(item,index) in contentTypes"
+                                   :key="index"
+                                   :label="item"
+                                   :value="item"></el-option>
+                      </el-select>
+                    </el-form-item>
+                  </el-col>
+                </el-row>
+                <el-row :gutter="20">
+                  <el-col :span="12">
+                    <el-form-item label="Module"
+                                  label-width="150px"
+                                  :required=true
+                                  prop="module">
+                      <el-select v-model="createParam.module"
+                                 placeholder="Please select"
+                                 size="small"
+                                 style="width: 400px;"
+                                 :disabled="isOnlyShowDetail">
+                        <el-option v-for="(item,index) in moduleList"
+                                   :key="index"
+                                   :label="item.name"
+                                   :value="item.id"></el-option>
+                      </el-select>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="12">
+                    <el-form-item label="Authorization Group"
+                                  label-width="150px"
+                                  :required=true
+                                  prop="group">
+                      <el-select v-model="createParam.group"
+                                 placeholder="Please select"
+                                 size="small"
+                                 style="width: 400px;"
+                                 :disabled="isOnlyShowDetail">
+                        <el-option v-for="(item,index) in groupList"
+                                   :key="index"
+                                   :label="item.name"
+                                   :value="item.id"></el-option>
+                      </el-select>
+                    </el-form-item>
+                  </el-col>
+                </el-row>
+                <el-row :gutter="20">
+                  <el-col :span="24">
+                    <el-form-item label="Description"
+                                  label-width="150px"
+                                  prop="description">
+                      <el-input type="textarea"
+                                v-model="createParam.description"
+                                auto-complete="off"
+                                size="small"
+                                style="width: 900px;"></el-input>
+                    </el-form-item>
+                  </el-col>
+                </el-row>
+              </el-tab-pane>
               <el-tab-pane label="SQL Configuration"
                            name="basic">
-                <el-row>
-                  <el-col :span="6">
+                <el-row :gutter="20">
+                  <el-col :span="8">
+                    <el-form-item label="DataSource"
+                                  label-width="90px"
+                                  prop="dataSourceId">
+                      <el-select placeholder="Please select datasource"
+                                 v-model="createParam.dataSourceId"
+                                 style="width: 100%;"
+                                 size="small">
+                        <el-option v-for="(item,index) in connectionList"
+                                   :key="index"
+                                   :label="item.name"
+                                   :value="item.id"></el-option>
+                      </el-select>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="8">
                     <el-form-item label="Engine"
                                   label-width="65px">
                       <el-radio-group size="small"
@@ -110,11 +206,14 @@
                       </el-radio-group>
                     </el-form-item>
                   </el-col>
-                  <el-col :span="6">
+                  <el-col :span="8">
+                    <el-form-item label="Editor Height"
+                                  label-width="100px">
                     <el-input-number v-model="editorHeightNum"
                                      size="small"
                                      :step="20"
                                      step-strictly></el-input-number>
+                    </el-form-item>
                   </el-col>
                 </el-row>
                 <el-row v-if="createParam.engine==='SQL'">
@@ -159,61 +258,54 @@
                 <el-tabs type="border-card"
                          tab-position="left">
                   <el-tab-pane label="Input Parameters">
-                    <el-row>
-                      <el-col :span="3"
-                              v-if="createParam.engine==='SQL'">
-                        <el-button type="primary"
-                                   size="mini"
-                                   icon="el-icon-arrow-down"
-                                   v-if="!isOnlyShowDetail"
-                                   @click="handleParseInputParams">
-                          Parse Input Params
-                        </el-button>
-                      </el-col>
-                      <el-col :span="3">
-                        <el-button type="primary"
-                                   size="mini"
-                                   icon="el-icon-arrow-down"
-                                   v-if="!isOnlyShowDetail"
-                                   @click="handleAddInputParams">
-                          Add Input Param
-                        </el-button>
-                      </el-col>
-                      <el-col :span="3">
-                        <el-button type="primary"
-                                   size="mini"
-                                   icon="el-icon-arrow-down"
-                                   v-if="!isOnlyShowDetail"
-                                   @click="handleAddPagableParams">
-                          Pagination Params
-                        </el-button>
-                      </el-col>
-                      <el-col :span="15">
-                      </el-col>
+                    <el-row style="margin-bottom: 15px; display: flex; gap: 10px;">
+                      <el-button type="primary"
+                                 size="small"
+                                 v-if="createParam.engine==='SQL' && !isOnlyShowDetail"
+                                 @click="handleParseInputParams">
+                        Parse Input Params
+                      </el-button>
+                      <el-button type="primary"
+                                 size="small"
+                                 v-if="!isOnlyShowDetail"
+                                 @click="handleAddInputParams">
+                        Add Input Param
+                      </el-button>
+                      <el-button type="primary"
+                                 size="small"
+                                 v-if="!isOnlyShowDetail"
+                                 @click="handleAddPagableParams">
+                        Pagination Params
+                      </el-button>
                     </el-row>
                     <el-table :data="inputParams"
-                              :header-cell-style="{background:'#eef1f6',color:'#606266'}"
-                              size="mini"
+                              size="small"
+                              border
                               default-expand-all
                               row-key="id"
-                              :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
-                              border>
+                              :tree-props="{ children: 'children', hasChildren: 'hasChildren' }">
                       <!--If not lazy loading, backend should not set hasChildren property, otherwise tree display will not work; -->
                       <template slot="empty">
                         <span>Please enter SQL and click "Parse Input Params" button to parse input parameters here</span>
                       </template>
-                      <el-table-column label="Parameter Name"
-                                       min-width="35%">
+                      <el-table-column min-width="14%">
+                        <template slot="header">
+                          <span style="white-space: nowrap;">Param Name</span>
+                        </template>
                         <template slot-scope="scope">
                           <el-input v-model="scope.row.name"
                                     type="string"
+                                    size="small"
                                     :disabled="isOnlyShowDetail"> </el-input>
                         </template>
                       </el-table-column>
-                      <el-table-column label="Parameter Location"
-                                       min-width="25%">
+                      <el-table-column min-width="14%">
+                        <template slot="header">
+                          <span style="white-space: nowrap;">Param Location</span>
+                        </template>
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.location"
+                                     size="small"
                                      :disabled="isOnlyShowDetail">
                             <el-option label='header'
                                        value='REQUEST_HEADER'></el-option>
@@ -224,10 +316,13 @@
                           </el-select>
                         </template>
                       </el-table-column>
-                      <el-table-column label="Parameter Type"
-                                       min-width="25%">
+                      <el-table-column min-width="11%">
+                        <template slot="header">
+                          <span style="white-space: nowrap;">Param Type</span>
+                        </template>
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.type"
+                                     size="small"
                                      :disabled="isOnlyShowDetail">
                             <el-option v-for="(item,index) in paramTypeList"
                                        :key="index"
@@ -237,39 +332,54 @@
                           </el-select>
                         </template>
                       </el-table-column>
-                      <el-table-column label="Array"
-                                       min-width="10%">
+                      <el-table-column min-width="7%"
+                                       align="center">
+                        <template slot="header">
+                          <span style="white-space: nowrap;">Array</span>
+                        </template>
                         <template slot-scope="scope">
                           <el-checkbox v-model="scope.row.isArray"
                                        :disabled="isOnlyShowDetail"></el-checkbox>
                         </template>
                       </el-table-column>
-                      <el-table-column label="Required"
-                                       min-width="10%">
+                      <el-table-column min-width="9%"
+                                       align="center">
+                        <template slot="header">
+                          <span style="white-space: nowrap;">Required</span>
+                        </template>
                         <template slot-scope="scope">
                           <el-checkbox v-model="scope.row.required"
                                        :disabled="isOnlyShowDetail"></el-checkbox>
                         </template>
                       </el-table-column>
-                      <el-table-column label="Default Value"
-                                       min-width="25%">
+                      <el-table-column min-width="13%">
+                        <template slot="header">
+                          <span style="white-space: nowrap;">Default Value</span>
+                        </template>
                         <template slot-scope="scope">
                           <el-input v-model="scope.row.defaultValue"
                                     type="string"
+                                    size="small"
                                     :disabled="isOnlyShowDetail "></el-input>
                         </template>
                       </el-table-column>
-                      <el-table-column label="Description"
-                                       min-width="25%">
+                      <el-table-column min-width="13%">
+                        <template slot="header">
+                          <span style="white-space: nowrap;">Description</span>
+                        </template>
                         <template slot-scope="scope">
                           <el-input v-model="scope.row.remark"
                                     type="string"
+                                    size="small"
                                     :disabled="isOnlyShowDetail"></el-input>
                         </template>
                       </el-table-column>
-                      <el-table-column label="Actions"
-                                       v-if="!isOnlyShowDetail"
-                                       min-width="25%">
+                      <el-table-column v-if="!isOnlyShowDetail"
+                                       min-width="10%"
+                                       align="center">
+                        <template slot="header">
+                          <span style="white-space: nowrap;">Actions</span>
+                        </template>
                         <template slot-scope="scope">
                           <el-link icon="el-icon-plus"
                                    v-if="scope.row.type=='OBJECT' && scope.row.location=='REQUEST_BODY'"
@@ -290,8 +400,8 @@
                       Add Output Param
                     </el-button>
                     <el-table :data="outputParams"
-                              :header-cell-style="{background:'#eef1f6',color:'#606266'}"
-                              size="mini"
+                              size="small"
+                              border
                               default-expand-all
                               row-key="id"
                               :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
@@ -344,116 +454,6 @@
                   </el-tab-pane>
                 </el-tabs>
               </el-tab-pane>
-              <el-tab-pane label="API Configuration"
-                           name="detail">
-                <el-row>
-                  <el-col :span="12">
-                    <el-form-item label="Path"
-                                  label-width="65px"
-                                  style="width:80%"
-                                  :required=true
-                                  prop="path">
-                      <el-input v-model="createParam.path"
-                                :disabled="isOnlyShowDetail || $route.query.id>0">
-                        <template slot="prepend">{{gatewayApiPrefix}}</template>
-                      </el-input>
-                    </el-form-item>
-                  </el-col>
-                  <el-col :span="12">
-                    <el-form-item label="Method"
-                                  label-width="65px"
-                                  style="width:50%"
-                                  :required=true
-                                  prop="method">
-                      <el-select v-model="createParam.method"
-                                 :disabled="isOnlyShowDetail || $route.query.id>0">
-                        <el-option label="GET"
-                                   value="GET"></el-option>
-                        <el-option label="PUT"
-                                   value="PUT"></el-option>
-                        <el-option label="POST"
-                                   value="POST"></el-option>
-                        <el-option label="DELETE"
-                                   value="DELETE"></el-option>
-                      </el-select>
-                    </el-form-item>
-                  </el-col>
-                </el-row>
-                <el-row>
-                  <el-col :span="12">
-                    <el-form-item label="Name"
-                                  label-width="65px"
-                                  :required=true
-                                  prop="name">
-                      <el-input v-model="createParam.name"
-                                auto-complete="off"
-                                style="width:75%"
-                                :disabled="isOnlyShowDetail"></el-input>
-                    </el-form-item>
-                  </el-col>
-                  <el-col :span="12">
-                    <el-form-item label="Content Type"
-                                  style="width:80%"
-                                  label-width="65px"
-                                  :required=true
-                                  prop="contentType">
-                      <el-select v-model="createParam.contentType"
-                                 :disabled="isOnlyShowDetail">
-                        <el-option v-for="(item,index) in contentTypes"
-                                   :key="index"
-                                   :label="item"
-                                   :value="item"></el-option>
-                      </el-select>
-                    </el-form-item>
-                  </el-col>
-                </el-row>
-                <el-row>
-                  <el-col :span="12">
-                    <el-form-item label="Module"
-                                  label-width="65px"
-                                  :required=true
-                                  style="width:80%"
-                                  prop="module">
-                      <el-select v-model="createParam.module"
-                                 placeholder="Please select"
-                                 :disabled="isOnlyShowDetail">
-                        <el-option v-for="(item,index) in moduleList"
-                                   :key="index"
-                                   :label="`[${item.id}]${item.name}`"
-                                   :value="item.id"></el-option>
-                      </el-select>
-                    </el-form-item>
-                  </el-col>
-                  <el-col :span="12">
-                    <el-form-item label="Authorization Group"
-                                  label-width="65px"
-                                  style="width:80%"
-                                  :required=true
-                                  prop="group">
-                      <el-select v-model="createParam.group"
-                                 placeholder="Please select"
-                                 :disabled="isOnlyShowDetail">
-                        <el-option v-for="(item,index) in groupList"
-                                   :key="index"
-                                   :label="`[${item.id}]${item.name}`"
-                                   :value="item.id"></el-option>
-                      </el-select>
-                    </el-form-item>
-                  </el-col>
-                </el-row>
-                <el-row>
-                  <el-col :span="24">
-                    <el-form-item label="Description"
-                                  label-width="60px"
-                                  prop="description"
-                                  style="width:100%">
-                      <el-input type="textarea"
-                                v-model="createParam.description"
-                                auto-complete="off"></el-input>
-                    </el-form-item>
-                  </el-col>
-                </el-row>
-              </el-tab-pane>
               <el-tab-pane label="Output Format"
                            name="outputParams">
                 <el-row>
@@ -484,18 +484,20 @@
                   </el-col>
                 </el-row>
                 <el-row>
-                  <el-col :span="12">
+                  <el-col :span="24">
                     <el-form-item label="Data Format"
                                   label-width="120px"
-                                  prop="formatMap"
-                                  style="width:60%">
+                                  prop="formatMap">
                       <div v-for="item in createParam.formatMap"
                            :key="item.key"
-                           v-bind="item">
-                        {{item.remark}}:
+                           v-bind="item"
+                           style="margin-bottom: 15px; display: flex; align-items: center;">
+                        <span style="min-width: 200px; margin-right: 15px;">{{item.remark}}:</span>
                         <el-input type="text"
                                   :key="item.key"
                                   v-model="item.value"
+                                  size="small"
+                                  style="width: 300px;"
                                   :value="item.value"> </el-input>
                       </div>
                     </el-form-item>
@@ -505,10 +507,10 @@
               <el-tab-pane label="Cache Configuration"
                            name="cacheConfig">
                 <el-form-item label="Cache Method"
-                              label-width="120px"
-                              style="width:60%">
+                              label-width="120px">
                   <el-select v-model="createParam.cacheKeyType"
-                             style="width:40%"
+                             size="small"
+                             style="width: 300px;"
                              :disabled="isOnlyShowDetail">
                     <el-option v-for="item in cacheKeyTypeList"
                                :key="item.value"
@@ -517,7 +519,6 @@
                   </el-select>
                 </el-form-item>
                 <el-form-item label-width="120px"
-                              style="width:60%"
                               v-show="createParam.cacheKeyType==='SPEL'">
                   <span slot="label"
                         style="display:inline-block;">
@@ -530,12 +531,12 @@
                   </span>
                   <el-input v-model="createParam.cacheKeyExpr"
                             auto-complete="off"
-                            style="width:75%"
+                            size="small"
+                            style="width: 600px;"
                             :disabled="isOnlyShowDetail"></el-input>
                 </el-form-item>
                 <el-form-item label="Expiration Time (seconds)"
                               label-width="120px"
-                              style="width:60%"
                               v-show="createParam.cacheKeyType==='SPEL'|| createParam.cacheKeyType==='AUTO'">
                   <el-input-number v-model="createParam.cacheExpireSeconds"
                                    size="small"
@@ -629,22 +630,25 @@
         <el-row>
           <el-col :span="24">
             <el-table :data="debugParams"
-                      :header-cell-style="{background:'#eef1f6',color:'#606266'}"
+                      size="small"
+                      border
                       row-key="id"
                       :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
-                      default-expand-all
-                      size="mini"
-                      border>
-              <el-table-column label="Parameter Name"
-                               min-width="35%">
+                      default-expand-all>
+              <el-table-column min-width="20%">
+                <template slot="header">
+                  <span style="white-space: nowrap;">Param Name</span>
+                </template>
                 <template slot-scope="scope">
                   <el-input v-model="scope.row.name"
                             :disabled="true"
                             type="string"> </el-input>
                 </template>
               </el-table-column>
-              <el-table-column label="Parameter Type"
-                               min-width="25%">
+              <el-table-column min-width="15%">
+                <template slot="header">
+                  <span style="white-space: nowrap;">Param Type</span>
+                </template>
                 <template slot-scope="scope">
                   <el-select v-model="scope.row.type"
                              :disabled="true">
@@ -655,30 +659,40 @@
                   </el-select>
                 </template>
               </el-table-column>
-              <el-table-column label="Array"
-                               min-width="10%">
+              <el-table-column min-width="8%"
+                               align="center">
+                <template slot="header">
+                  <span style="white-space: nowrap;">Array</span>
+                </template>
                 <template slot-scope="scope">
                   <el-checkbox v-model="scope.row.isArray"
                                :disabled="true"></el-checkbox>
                 </template>
               </el-table-column>
-              <el-table-column label="Required"
-                               min-width="10%">
+              <el-table-column min-width="10%"
+                               align="center">
+                <template slot="header">
+                  <span style="white-space: nowrap;">Required</span>
+                </template>
                 <template slot-scope="scope">
                   <el-checkbox v-model="scope.row.required"
                                :disabled="true"></el-checkbox>
                 </template>
               </el-table-column>
-              <el-table-column label="Description"
-                               min-width="25%">
+              <el-table-column min-width="15%">
+                <template slot="header">
+                  <span style="white-space: nowrap;">Description</span>
+                </template>
                 <template slot-scope="scope">
                   <el-input v-model="scope.row.remark"
                             :disabled="true"
                             type="string"></el-input>
                 </template>
               </el-table-column>
-              <el-table-column label="Value"
-                               min-width="50%">
+              <el-table-column min-width="32%">
+                <template slot="header">
+                  <span style="white-space: nowrap;">Value</span>
+                </template>
                 <template slot-scope="scope">
                   <div v-if="scope.row.isArray">
                     <el-row v-if="scope.row.type=='OBJECT'">
@@ -755,8 +769,7 @@
                size="40%"
                :with-header="true">
       <el-card>
-        <el-table :header-cell-style="{background:'#eef1f6',color:'#606266'}"
-                  :data="versionList"
+        <el-table :data="versionList"
                   size="small"
                   border>
           <el-table-column label="Version"
@@ -809,7 +822,7 @@ export default {
   name: "common",
   data () {
     return {
-      tabActiveName: 'basic',
+      tabActiveName: 'detail',
       groupList: [],
       moduleList: [],
       connectionList: [],
@@ -1354,13 +1367,6 @@ export default {
     },
     handleGoBack: function () {
       this.$router.go(-1);
-    },
-    handleShowTree: function () {
-      let status = !this.showTree;
-      this.showTree = status;
-      if (this.showTree) {
-        this.loadTreeData();
-      }
     },
     handleParseInputParams: function () {
       var currTabSql = this.$refs.sqlEditors.queryCurrentTabSql()
@@ -2101,5 +2107,52 @@ export default {
 }
 .debug-console-log-text {
   white-space: pre-line;
+}
+
+/* Vertical tabs styling - DBAPI-UI style */
+.el-tabs--left {
+  min-height: 600px;
+}
+
+.el-tabs--left .el-tabs__header {
+  margin-right: 0;
+  width: 200px;
+  background-color: #fafafa;
+  border-right: 1px solid #e4e7ed;
+}
+
+.el-tabs--left .el-tabs__nav-wrap {
+  margin-right: 0;
+}
+
+.el-tabs--left .el-tabs__item {
+  text-align: left;
+  padding: 0 20px;
+  height: 50px;
+  line-height: 50px;
+  color: #606266;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.el-tabs--left .el-tabs__item:hover {
+  color: #b142af;
+  background-color: #f5f7fa;
+}
+
+.el-tabs--left .el-tabs__item.is-active {
+  color: #b142af;
+  background-color: #f0f2f5;
+  font-weight: 500;
+}
+
+.el-tabs--left .el-tabs__active-bar {
+  background-color: #b142af;
+  width: 3px;
+}
+
+.el-tabs--left .el-tabs__content {
+  padding: 20px;
+  background-color: #ffffff;
 }
 </style>

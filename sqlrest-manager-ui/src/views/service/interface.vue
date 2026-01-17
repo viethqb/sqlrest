@@ -25,8 +25,7 @@
       <div class="resizable"
            :style="{ width: rightWidth + 'px' }">
         <div v-if="!showDetail">
-          <el-table :header-cell-style="{background:'#eef1f6',color:'#606266'}"
-                    :data="tableData"
+          <el-table :data="tableData"
                     size="small"
                     border>
             <el-table-column prop="name"
@@ -145,8 +144,8 @@
               </el-col>
               <el-col :span="20">
                 <el-table :data="interfaceDetail.inputParams"
-                          :header-cell-style="{background:'#eef1f6',color:'#606266'}"
-                          size="mini"
+                          size="small"
+                          border
                           default-expand-all
                           row-key="id"
                           :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
@@ -207,8 +206,8 @@
               </el-col>
               <el-col :span="20">
                 <el-table :data="interfaceDetail.outputParams"
-                          :header-cell-style="{background:'#eef1f6',color:'#606266'}"
-                          size="mini"
+                          size="small"
+                          border
                           default-expand-all
                           row-key="id"
                           :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
@@ -237,8 +236,7 @@
             </el-row>
           </el-tab-pane>
           <el-tab-pane label="Access Log">
-            <el-table :header-cell-style="{background:'#eef1f6',color:'#606266'}"
-                      :data="accessLogData"
+            <el-table :data="accessLogData"
                       size="small"
                       border>
               <el-table-column prop="createTime"
@@ -343,10 +341,9 @@
                :showClose="false"
                width="40%"
                :before-close="handleClose">
-      <el-table :header-cell-style="{background:'#eef1f6',color:'#606266'}"
-                :data="versionList"
+      <el-table :data="versionList"
                 highlight-current-row
-                size="mini"
+                size="small"
                 border>
         <template slot="empty">
           <span>Version list is empty, please click "Publish" button to publish a version</span>

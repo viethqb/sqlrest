@@ -1,5 +1,6 @@
 <template>
   <div>
+    <h1 class="page-title">PERSONAL CENTER</h1>
     <el-card class="box-card">
       <el-tabs v-model="activeName"
                @tab-click="handleClick">

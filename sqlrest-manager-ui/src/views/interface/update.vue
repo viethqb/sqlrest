@@ -1,6 +1,9 @@
 <template>
-  <common :isOnlyShowDetail="false">
-  </common>
+  <div>
+    <h1 class="page-title">UPDATE API</h1>
+    <common :isOnlyShowDetail="false">
+    </common>
+  </div>
 </template>
 
 <script>

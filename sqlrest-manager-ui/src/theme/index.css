@@ -1,0 +1,255 @@
+/* SQLREST Theme - DBAPI Style */
+
+/* Color Variables */
+:root {
+  /* Header Colors */
+  --header-bg-gradient: linear-gradient(15deg, #486180, #324256, #486180);
+  --header-text: #bfcbd9;
+  --header-active: #f9fbfd;
+  --header-hover: #222d3b;
+  --header-bg-submenu: #304156;
+
+  /* Body Colors */
+  --body-bg: #f3f3f321;
+  --body-text: #606266;
+
+  /* Primary Colors */
+  --primary-color: #20B2AA;
+  --primary-active: #20B2AA;
+  
+  /* Spacing */
+  --spacing-xs: 5px;
+  --spacing-sm: 10px;
+  --spacing-md: 20px;
+  --spacing-lg: 30px;
+}
+
+/* Global Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+li {
+  list-style: none;
+}
+
+a {
+  color: #666;
+  text-decoration: none;
+}
+
+img {
+  border: 0;
+  vertical-align: middle;
+}
+
+/* Body Styles */
+body {
+  background-color: var(--body-bg);
+  color: var(--body-text);
+  font-family: 'Consolas', Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* App Container */
+#app {
+  font-family: 'Consolas', Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  width: auto;
+  margin: 0 auto;
+}
+
+/* Typography */
+body, p, span, div, label {
+  font-family: 'Consolas', Helvetica, Arial, sans-serif;
+  font-size: 14px;
+}
+
+i {
+  font-size: 14px;
+}
+
+h2 {
+  margin-bottom: 25px;
+  text-align: center;
+  font-family: 'Consolas', Helvetica, Arial, sans-serif;
+  font-size: 18px;
+}
+
+h4 {
+  margin: 10px 0;
+  font-family: 'Consolas', Helvetica, Arial, sans-serif;
+  font-size: 16px;
+}
+
+/* Page Title - Global Style */
+h1.page-title {
+  text-align: center;
+  font-size: 22px;
+  font-weight: bold;
+  color: #606266;
+  padding: 15px 0;
+  margin-bottom: 10px;
+  margin-top: 0;
+  text-transform: uppercase;
+  font-family: 'Consolas', Helvetica, Arial, sans-serif;
+}
+
+/* Button Styles */
+.el-button--primary {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+  color: #fff;
+  transition: all 0.3s ease;
+}
+
+.el-button--primary.is-active,
+.el-button--primary:active,
+.el-button--primary:hover,
+.el-button--primary:focus {
+  background: var(--primary-active);
+  border-color: var(--primary-active);
+  color: #fff;
+  opacity: 0.9;
+}
+
+.el-button--primary.is-disabled,
+.el-button--primary.is-disabled:hover {
+  background-color: #c0c4cc;
+  border-color: #c0c4cc;
+  color: #fff;
+  opacity: 0.6;
+}
+
+/* Warning Button Styles */
+.el-button--warning {
+  transition: all 0.3s ease;
+}
+
+.el-button--warning:hover {
+  opacity: 0.9;
+}
+
+/* Gap utility */
+.gap {
+  margin: 0 10px 10px 0;
+}
+
+/* Card Styles */
+.el-card {
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  border: 1px solid #ebeef5;
+}
+
+.el-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.el-card__header {
+  padding: 18px 20px;
+  background-color: #fafafa;
+  border-bottom: 1px solid #ebeef5;
+  font-weight: 500;
+}
+
+.el-card__body {
+  padding: 20px;
+}
+
+/* Form Elements */
+.el-input__inner {
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+.el-input__inner:focus {
+  border-color: var(--primary-color);
+}
+
+.el-select .el-input__inner:focus {
+  border-color: var(--primary-color);
+}
+
+/* Table Styles */
+.el-table {
+  border-radius: 8px;
+  overflow: hidden;
+  font-family: 'Consolas', Helvetica, Arial, sans-serif;
+  font-size: 14px;
+}
+
+.el-table th {
+  background-color: #fafafa;
+  color: #909399;
+  font-weight: 600;
+  font-size: 13px;
+  transition: background-color 0.3s ease;
+  cursor: pointer;
+}
+
+.el-table th:hover {
+  background-color: #f0f2f5 !important;
+}
+
+.el-table th.is-sortable:hover {
+  background-color: #e8ebef !important;
+}
+
+.el-table td {
+  font-size: 14px;
+  color: #606266;
+}
+
+.el-table--border {
+  border: 1px solid #ebeef5;
+}
+
+.el-table tr:hover > td {
+  background-color: #f5f7fa;
+}
+
+.el-table--striped .el-table__body tr.el-table__row--striped td {
+  background-color: #fafafa;
+}
+
+/* Mini table size */
+.el-table--mini {
+  font-size: 12px;
+}
+
+.el-table--mini th,
+.el-table--mini td {
+  font-size: 12px;
+}
+
+/* Small table size */
+.el-table--small {
+  font-size: 13px;
+}
+
+.el-table--small th,
+.el-table--small td {
+  font-size: 13px;
+}
+
+/* Select Dropdown */
+.el-select-dropdown {
+  border-radius: 4px;
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+}
+
+.el-select-dropdown__item:hover {
+  background-color: #f5f7fa;
+}
+
+.el-select-dropdown__item.selected {
+  color: var(--primary-color);
+  font-weight: 500;
+}

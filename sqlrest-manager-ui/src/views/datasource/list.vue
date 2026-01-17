@@ -1,5 +1,6 @@
 <template>
   <div>
+    <h1 class="page-title">CONNECTION MANAGEMENT</h1>
     <el-card>
       <div class="connection-list-top">
         <div class="left-search-input-group">
@@ -14,67 +15,74 @@
         </div>
         <div class="right-add-button-group">
           <el-button type="primary"
-                     size="mini"
-                     icon="el-icon-document-add"
+                     size="small"
                      @click="addConnection">Add</el-button>
         </div>
       </div>
 
-      <el-table :header-cell-style="{background:'#eef1f6',color:'#606266'}"
-                :data="tableData"
+      <el-table :data="tableData"
                 size="small"
                 border>
         <el-table-column prop="id"
                          label="ID"
                          min-width="5%"></el-table-column>
         <el-table-column prop="name"
-                         label="Connection Name"
-                         show-overflow-tooltip
-                         min-width="20%"></el-table-column>
-        <el-table-column prop="createTime"
-                         label="Create Time"
-                         min-width="18%"></el-table-column>
-        <el-table-column label="Database Type"
-                         show-overflow-tooltip
-                         min-width="15%">
+                         label="Name"
+                         min-width="15%"
+                         sortable>
           <template slot-scope="scope">
-            <databaseIcon :type="scope.row.type"></databaseIcon>
-            <span>{{ scope.row.type }}</span>
+            <div style="word-break: break-word; white-space: normal;">{{ scope.row.name }}</div>
+          </template>
+        </el-table-column>
+        <el-table-column label="Type"
+                         min-width="12%"
+                         sortable
+                         :sort-method="sortByType">
+          <template slot-scope="scope">
+            <span>{{ formatDatabaseName(scope.row.type) }}</span>
           </template>
         </el-table-column>
         <el-table-column prop="url"
-                         label="JDBC Connection String"
-                         show-overflow-tooltip
-                         min-width="15%"></el-table-column>
-        <el-table-column prop="username"
-                         label="Username"
-                         show-overflow-tooltip
-                         min-width="10%"></el-table-column>
-        <el-table-column label="Actions"
+                         label="URL"
                          min-width="35%">
           <template slot-scope="scope">
-            <el-button-group>
-              <el-button size="small"
-                         type="danger"
-                         icon="el-icon-video-play"
-                         @click="handleTest(scope.$index, scope.row)"
-                         round>Test</el-button>
-              <el-button size="small"
-                         type="primary"
-                         icon="el-icon-document"
-                         @click="handleMore(scope.$index, scope.row)"
-                         round>Details</el-button>
-              <el-button size="small"
-                         type="warning"
-                         icon="el-icon-edit"
-                         @click="handleUpdate(scope.$index, scope.row)"
-                         round>Edit</el-button>
-              <el-button size="small"
-                         type="success"
-                         icon="el-icon-delete"
-                         @click="handleDelete(scope.$index, scope.row)"
-                         round>Delete</el-button>
-            </el-button-group>
+            <div style="word-break: break-word; white-space: normal;">{{ scope.row.url }}</div>
+          </template>
+        </el-table-column>
+        <el-table-column prop="username"
+                         label="Username"
+                         min-width="12%">
+          <template slot-scope="scope">
+            <div style="word-break: break-word; white-space: normal;">{{ scope.row.username }}</div>
+          </template>
+        </el-table-column>
+        <el-table-column prop="createTime"
+                         label="Create Time"
+                         min-width="15%"
+                         sortable></el-table-column>
+        <el-table-column label="Action"
+                         min-width="20%">
+          <template slot-scope="scope">
+            <el-tooltip content="Test" placement="top" effect="dark">
+              <el-button plain size="mini" type="danger" @click="handleTest(scope.$index, scope.row)" circle>
+                <i class="el-icon-video-play"></i>
+              </el-button>
+            </el-tooltip>
+            <el-tooltip content="Details" placement="top" effect="dark">
+              <el-button plain size="mini" type="info" @click="handleMore(scope.$index, scope.row)" circle>
+                <i class="el-icon-document"></i>
+              </el-button>
+            </el-tooltip>
+            <el-tooltip content="Edit" placement="top" effect="dark">
+              <el-button plain size="mini" type="warning" @click="handleUpdate(scope.$index, scope.row)" circle>
+                <i class="el-icon-edit"></i>
+              </el-button>
+            </el-tooltip>
+            <el-tooltip content="Delete" placement="top" effect="dark">
+              <el-button plain size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)" circle>
+                <i class="el-icon-delete"></i>
+              </el-button>
+            </el-tooltip>
           </template>
         </el-table-column>
       </el-table>
@@ -89,43 +97,43 @@
                        :total="totalCount"></el-pagination>
       </div>
 
-      <el-dialog title="View Database Connection Information"
+      <el-dialog title="View DataSource"
                  :visible.sync="dialogFormVisible"
                  :showClose="false"
                  :before-close="handleClose">
         <el-form :model="queryForm"
                  size="mini">
-          <el-form-item label="Connection Name"
-                        label-width="120px"
-                        style="width:85%">
+          <el-form-item label="Name"
+                        label-width="100px"
+                        style="width:100%">
             <el-input v-model="queryForm.name"
                       auto-complete="off"
                       :readonly=true></el-input>
           </el-form-item>
-          <el-form-item label="Database Type"
-                        label-width="120px"
-                        style="width:85%">
-            <el-input v-model="queryForm.type"
+          <el-form-item label="Database"
+                        label-width="100px"
+                        style="width:100%">
+            <el-input :value="formatDatabaseName(queryForm.type)"
                       auto-complete="off"
                       :readonly=true></el-input>
           </el-form-item>
           <el-form-item label="Database Driver"
-                        label-width="120px"
-                        style="width:85%">
+                        label-width="100px"
+                        style="width:100%">
             <el-input v-model="queryForm.driver"
                       auto-complete="off"
                       :readonly=true></el-input>
           </el-form-item>
           <el-form-item label="Driver Version"
-                        label-width="120px"
-                        style="width:85%">
+                        label-width="100px"
+                        style="width:100%">
             <el-input v-model="queryForm.version"
                       auto-complete="off"
                       :readonly=true></el-input>
           </el-form-item>
-          <el-form-item label="JDBC Connection String"
-                        label-width="120px"
-                        style="width:85%">
+          <el-form-item label="JDBC URL"
+                        label-width="100px"
+                        style="width:100%">
             <el-input type="textarea"
                       :rows="6"
                       :spellcheck="false"
@@ -134,15 +142,15 @@
                       :readonly=true></el-input>
           </el-form-item>
           <el-form-item label="Username"
-                        label-width="120px"
-                        style="width:85%">
+                        label-width="100px"
+                        style="width:100%">
             <el-input v-model="queryForm.username"
                       auto-complete="off"
                       :readonly=true></el-input>
           </el-form-item>
           <el-form-item label="Password"
-                        label-width="120px"
-                        style="width:85%">
+                        label-width="100px"
+                        style="width:100%">
             <el-input type="password"
                       v-model="queryForm.password"
                       auto-complete="off"
@@ -155,34 +163,38 @@
         </div>
       </el-dialog>
 
-      <el-dialog title="Add Datasource Connection Information"
+      <el-dialog title="New DataSource"
                  :visible.sync="createFormVisible"
                  :showClose="false"
-                 :before-close="handleClose">
+                 :before-close="handleClose"
+                 width="700px">
         <el-form :model="createform"
-                 size="mini"
+                 size="small"
                  status-icon
                  :rules="rules"
                  ref="createform">
-          <el-form-item label="Connection Name"
+          <el-form-item label="Name"
                         label-width="120px"
                         :required=true
                         prop="name"
-                        style="width:85%">
+                        style="width:520px">
             <el-input v-model="createform.name"
-                      auto-complete="off"></el-input>
+                      auto-complete="off"
+                      class="form-input-large"></el-input>
           </el-form-item>
-          <el-form-item label="Database Type"
+          <el-form-item label="Database"
                         label-width="120px"
                         :required=true
                         prop="type"
-                        style="width:85%">
+                        style="width:520px">
             <el-select v-model="createform.type"
                        @change="selectChangedDriverVersion"
-                       placeholder="Please select database">
+                       placeholder="Please select database"
+                       style="width:100%"
+                       class="form-select-large">
               <el-option v-for="(item,index) in databaseType"
                          :key="index"
-                         :label="item.type"
+                         :label="formatDatabaseName(item.type)"
                          :value="item.type">
               </el-option>
             </el-select>
@@ -191,46 +203,52 @@
                         label-width="120px"
                         :required=true
                         prop="version"
-                        style="width:85%">
+                        style="width:520px">
             <el-select v-model="createform.version"
-                       placeholder="Please select version">
+                       placeholder="Please select version"
+                       style="width:100%"
+                       class="form-select-large">
               <el-option v-for="(item,index) in connectionDriver"
                          :key="index"
                          :label="item.driverVersion"
                          :value="item.driverVersion"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="JDBC Connection String"
+          <el-form-item label="JDBC URL"
                         label-width="120px"
                         :required=true
                         prop="url"
-                        style="width:85%">
+                        style="width:520px">
             <el-alert title="Example:"
                       type="warning"
-                      :description="createform.sample">
+                      :description="createform.sample"
+                      style="margin-bottom:10px;">
             </el-alert>
             <el-input type="textarea"
                       :rows="6"
                       :spellcheck="false"
                       placeholder="Please enter"
                       v-model="createform.url"
-                      auto-complete="off">
+                      auto-complete="off"
+                      class="form-textarea-large">
             </el-input>
           </el-form-item>
           <el-form-item label="Username"
                         label-width="120px"
                         prop="username"
-                        style="width:85%">
+                        style="width:520px">
             <el-input v-model="createform.username"
-                      auto-complete="off"></el-input>
+                      auto-complete="off"
+                      class="form-input-large"></el-input>
           </el-form-item>
           <el-form-item label="Password"
                         label-width="120px"
                         prop="password"
-                        style="width:85%">
+                        style="width:520px">
             <el-input type="password"
                       v-model="createform.password"
-                      auto-complete="off"></el-input>
+                      auto-complete="off"
+                      class="form-input-large"></el-input>
           </el-form-item>
         </el-form>
         <div slot="footer"
@@ -244,34 +262,38 @@
         </div>
       </el-dialog>
 
-      <el-dialog title="Update Datasource Connection Information"
+      <el-dialog title="Update DataSource"
                  :visible.sync="updateFormVisible"
                  :showClose="false"
-                 :before-close="handleClose">
+                 :before-close="handleClose"
+                 width="700px">
         <el-form :model="updateform"
-                 size="mini"
+                 size="small"
                  status-icon
                  :rules="rules"
                  ref="updateform">
-          <el-form-item label="Connection Name"
+          <el-form-item label="Name"
                         label-width="120px"
                         :required=true
                         prop="name"
-                        style="width:85%">
+                        style="width:520px">
             <el-input v-model="updateform.name"
-                      auto-complete="off"></el-input>
+                      auto-complete="off"
+                      class="form-input-large"></el-input>
           </el-form-item>
-          <el-form-item label="Database Type"
+          <el-form-item label="Database"
                         label-width="120px"
                         :required=true
                         prop="type"
-                        style="width:85%">
+                        style="width:520px">
             <el-select v-model="updateform.type"
                        @change="selectChangedDriverVersion"
-                       placeholder="Please select database">
+                       placeholder="Please select database"
+                       style="width:100%"
+                       class="form-select-large">
               <el-option v-for="(item,index) in databaseType"
                          :key="index"
-                         :label="item.type"
+                         :label="formatDatabaseName(item.type)"
                          :value="item.type"></el-option>
             </el-select>
           </el-form-item>
@@ -279,38 +301,44 @@
                         label-width="120px"
                         :required=true
                         prop="version"
-                        style="width:85%">
+                        style="width:520px">
             <el-select v-model="updateform.version"
-                       placeholder="Please select version">
+                       placeholder="Please select version"
+                       style="width:100%"
+                       class="form-select-large">
               <el-option v-for="(item,index) in connectionDriver"
                          :key="index"
                          :label="item.driverVersion"
                          :value="item.driverVersion"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="JDBC Connection String"
+          <el-form-item label="JDBC URL"
                         label-width="120px"
                         :required=true
                         prop="url"
-                        style="width:85%">
+                        style="width:520px">
             <el-input type="textarea"
                       :rows="6"
                       :spellcheck="false"
                       v-model="updateform.url"
-                      auto-complete="off"></el-input>
+                      auto-complete="off"
+                      class="form-textarea-large">
+            </el-input>
           </el-form-item>
           <el-form-item label="Username"
                         label-width="120px"
-                        style="width:85%">
+                        style="width:520px">
             <el-input v-model="updateform.username"
-                      auto-complete="off"></el-input>
+                      auto-complete="off"
+                      class="form-input-large"></el-input>
           </el-form-item>
           <el-form-item label="Password"
                         label-width="120px"
-                        style="width:85%">
+                        style="width:520px">
             <el-input type="password"
                       v-model="updateform.password"
-                      auto-complete="off"></el-input>
+                      auto-complete="off"
+                      class="form-input-large"></el-input>
           </el-form-item>
         </el-form>
         <div slot="footer"
@@ -328,13 +356,8 @@
 </template>
 
 <script>
-import databaseIcon from "@/components/databaseIcon/databaseIcon";
-
 export default {
   name: "datasource",
-  components: {
-    databaseIcon
-  },
   data () {
     return {
       loading: true,
@@ -411,6 +434,19 @@ export default {
     }
   },
   methods: {
+    formatDatabaseName: function (type) {
+      if (!type) return '';
+      // Convert to lowercase, then capitalize first letter
+      return type.charAt(0).toUpperCase() + type.slice(1).toLowerCase();
+    },
+    sortByType: function (a, b) {
+      // Sort by original type value (not formatted)
+      const typeA = (a.type || '').toLowerCase();
+      const typeB = (b.type || '').toLowerCase();
+      if (typeA < typeB) return -1;
+      if (typeA > typeB) return 1;
+      return 0;
+    },
     loadData: function () {
       this.$http({
         method: "POST",
@@ -760,5 +796,36 @@ export default {
   width: 100px;
   margin-left: auto;
   margin: 10px 5px;
+}
+
+.page-title {
+  text-align: center;
+  font-size: 22px;
+  font-weight: bold;
+  color: #606266;
+  padding: 15px 0;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+
+/* Form input and select larger size */
+.form-input-large .el-input__inner {
+  font-size: 14px;
+  height: 36px;
+  line-height: 36px;
+}
+
+.form-select-large .el-input__inner {
+  font-size: 14px;
+  height: 36px;
+  line-height: 36px;
+}
+
+.form-select-large .el-input__suffix {
+  line-height: 36px;
+}
+
+.form-textarea-large .el-textarea__inner {
+  font-size: 14px;
 }
 </style>

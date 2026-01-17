@@ -1,93 +1,102 @@
 <template>
-  <el-card>
-    <el-container class="app-container">
-      <!-- Header Area -->
-      <el-header class="app-header">
-        <div class="header-content">
-          <div class="search-box">
-            <el-input v-model="searchKeyword"
-                      placeholder="Please enter API name keyword to search"
-                      class="search-input"
-                      @keyup.enter="handleSearch">
-            </el-input>
-            <el-button type="primary"
-                       class="search-btn"
-                       @click="handleSearch">
-              Search
-            </el-button>
-          </div>
-        </div>
-      </el-header>
-
-      <el-container>
-        <!-- Left Sidebar -->
-        <el-aside width="280px"
-                  class="app-aside">
-          <div class="filter-section">
-            <h3 class="filter-title">Module Filter</h3>
-            <el-checkbox-group v-model="selectedModuleList"
-                               class="checkbox-group">
-              <el-checkbox v-for="item in moduleItemList"
-                           :key="item.id"
-                           :label="item.id"
+  <div>
+    <h1 class="page-title">ONLINE APIs</h1>
+    <el-card>
+      <div style="margin-bottom: 15px; display: flex; gap: 15px; align-items: center;">
+        <el-input v-model="searchKeyword"
+                  placeholder="Please enter API name keyword to search"
+                  size="small"
+                  style="width: 400px;"
+                  @keyup.enter="handleSearch">
+        </el-input>
+        <el-button type="primary"
+                   size="small"
+                   @click="handleSearch">
+          Search
+        </el-button>
+        <el-checkbox-group v-model="selectedModuleList"
                            @change="handleSearch"
-                           class="filter-checkbox">
-                {{ item.name }}
-              </el-checkbox>
-            </el-checkbox-group>
-          </div>
-        </el-aside>
+                           style="margin-left: 20px;">
+          <el-checkbox v-for="item in moduleItemList"
+                       :key="item.id"
+                       :label="item.id"
+                       border
+                       size="small">
+            {{ item.name }}
+          </el-checkbox>
+        </el-checkbox-group>
+      </div>
 
-        <!-- Right Content Area -->
-        <el-main class="app-main">
-          <!-- Card Grid Layout -->
-          <div class="card-grid">
-            <el-card v-for="item in allData"
-                     :key="item.id"
-                     class="content-card"
-                     @click.native="handleGoDetail(item)"
-                     :body-style="{ padding: '0px' }">
-              <div class="card-content">
-                <h4 class="card-title">【{{item.id}}】{{ item.name }}</h4>
-                <el-tooltip class="item"
-                            effect="dark"
-                            content="Authentication Required"
-                            placement="top-end">
-                  <i v-if="!item.open"
-                     class="el-icon-user operator-icon"
-                     style="float: right;"></i></el-tooltip>
-                <div class="card-meta">
-                  <span class="card-date">Online Time: {{ item.createTime }}</span>
-                </div>
-                <el-tag>{{ item.method }}</el-tag><span>{{ item.path }}</span>
-                <div class="card-meta">
-                  <span class="card-tag">Online Version: <el-tag>V{{ item.version }}</el-tag></span>
-                </div>
-                <p class="card-desc">{{ item.description }}</p>
-                <div class="card-meta">
-                  <span class="card-tag">Module Name: {{ item.moduleName }}</span>
-                  <span class="card-tag">Authorization Group: {{ item.groupName }}</span>
-                </div>
-              </div>
-            </el-card>
-          </div>
+      <el-table :data="allData"
+                size="small"
+                border>
+        <el-table-column prop="id"
+                         label="ID"
+                         min-width="8%"></el-table-column>
+        <el-table-column prop="name"
+                         label="Name"
+                         show-overflow-tooltip
+                         min-width="18%">
+          <template slot-scope="scope">
+            <el-link type="primary"
+                     @click="handleGoDetail(scope.row)">{{ scope.row.name }}</el-link>
+            <i v-if="!scope.row.open"
+               class="el-icon-user"
+               style="margin-left: 5px; color: #909399;"
+               title="Authentication Required"></i>
+          </template>
+        </el-table-column>
+        <el-table-column label="Path"
+                         show-overflow-tooltip
+                         min-width="25%">
+          <template slot-scope="scope">
+            <el-tag size="small"
+                    class="method-tag">{{ scope.row.method }}</el-tag>
+            <span style="margin-left: 5px;">{{ scope.row.path }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="moduleName"
+                         label="Module"
+                         show-overflow-tooltip
+                         min-width="12%"></el-table-column>
+        <el-table-column prop="groupName"
+                         label="Authorization Group"
+                         show-overflow-tooltip
+                         min-width="15%"></el-table-column>
+        <el-table-column label="Version"
+                         min-width="10%">
+          <template slot-scope="scope">
+            <el-tag size="small">V{{ scope.row.version }}</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column prop="createTime"
+                         label="Create Time"
+                         min-width="15%"></el-table-column>
+        <el-table-column label="Actions"
+                         min-width="15%"
+                         align="center">
+          <template slot-scope="scope">
+            <el-tooltip content="Details" placement="top" effect="dark">
+              <el-button plain size="mini" type="primary" @click="handleGoDetail(scope.row)" circle>
+                <i class="el-icon-view"></i>
+              </el-button>
+            </el-tooltip>
+          </template>
+        </el-table-column>
+      </el-table>
 
-          <!-- Pagination Component -->
-          <div class="pagination-section">
-            <el-pagination @size-change="handleSizeChange"
-                           @current-change="handleCurrentChange"
-                           :current-page="currentPage"
-                           :page-sizes="[12, 24, 36, 48]"
-                           :page-size="pageSize"
-                           layout="total, sizes, prev, pager, next, jumper"
-                           :total="totalCount"
-                           class="custom-pagination">
-            </el-pagination>
-          </div>
-        </el-main>
-      </el-container>
-    </el-container>
-  </el-card>
+      <div class="page" align="right" style="margin-top: 20px;">
+        <el-pagination @size-change="handleSizeChange"
+                       @current-change="handleCurrentChange"
+                       :current-page="currentPage"
+                       :page-sizes="[10, 20, 50, 100]"
+                       :page-size="pageSize"
+                       layout="total, sizes, prev, pager, next, jumper"
+                       :total="totalCount">
+        </el-pagination>
+      </div>
+    </el-card>
+  </div>
 </template>
 
 <script>
@@ -185,171 +194,13 @@ export default {
 <style scoped>
 .el-card {
   width: 100%;
-  height: 100%;
-  overflow: auto;
 }
 
-.app-container {
-  height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+.method-tag {
+  font-weight: bold;
 }
 
-.app-header {
-  background: rgba(255, 255, 255, 0.95);
-  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
-  display: flex;
-  align-items: center;
-  padding: 0 30px;
-}
-
-.header-content {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-}
-
-.header-title {
-  color: #333;
-  font-size: 24px;
-  font-weight: 600;
-  margin: 0;
-}
-
-.search-box {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.search-input {
-  width: 400px;
-}
-
-.search-input >>> .el-input__inner {
-  border-radius: 20px;
-  padding-left: 40px;
-}
-
-.search-btn {
-  border-radius: 20px;
-  padding: 12px 24px;
-}
-
-.app-aside {
-  background: rgba(255, 255, 255, 0.9);
-  border-right: 1px solid #e6e6e6;
-  padding: 20px;
-}
-
-.filter-section {
-  background: white;
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-}
-
-.filter-title {
-  color: #333;
-  font-size: 16px;
-  font-weight: 600;
-  margin-bottom: 16px;
-}
-
-.checkbox-group {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.filter-checkbox {
-  display: block;
-  padding: 8px 0;
-}
-
-.app-main {
-  background: #f5f7fa;
-  padding: 24px;
-}
-
-.card-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 20px;
-  margin-bottom: 30px;
-}
-
-.content-card {
-  border-radius: 12px;
-  transition: all 0.3s ease;
-  cursor: pointer;
-  border: none;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-}
-
-.content-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-}
-
-.content-card:hover .card-img {
-  transform: scale(1.05);
-}
-
-.card-content {
-  padding: 16px;
-}
-
-.card-title {
-  color: #333;
-  font-size: 16px;
-  font-weight: 600;
-  margin: 0 0 8px 0;
-  line-height: 1.4;
-}
-
-.card-desc {
-  color: #666;
-  font-size: 14px;
-  line-height: 1.5;
-  margin-bottom: 12px;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.card-meta {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 12px;
-}
-
-.card-date {
-  color: #999;
-}
-
-.card-tag {
-  color: #409eff;
-  background: rgba(64, 158, 255, 0.1);
-  padding: 2px 8px;
-  border-radius: 4px;
-}
-
-.pagination-section {
-  display: flex;
-  justify-content: center;
-  padding: 20px 0;
-}
-
-.custom-pagination >>> .el-pager li {
-  border-radius: 8px;
-  margin: 0 4px;
-}
-
-.custom-pagination >>> .el-pager li.active {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+.page {
+  margin-top: 20px;
 }
 </style>

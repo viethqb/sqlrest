@@ -1,5 +1,6 @@
 <template>
   <div class="dashbord">
+    <h1 class="page-title">DASHBOARD</h1>
     <el-row class="infoCrads">
       <el-col :span="6">
         <div class="cardItem">
@@ -58,7 +59,7 @@
         </div>
       </el-col>
     </el-row>
-    <el-card class="box-card">
+    <el-card class="box-card" shadow="hover">
       <div slot="header"
            class="clearfix">
         <el-row>
@@ -75,7 +76,7 @@
             </el-select>
           </el-col>
           <el-col :span="8">
-            <span>TOPN Count:</span>
+            <span>TOP N Count:</span>
             <el-select v-model="topNum"
                        @change="selectChangedTopNum"
                        placeholder="Please select topN">
@@ -131,11 +132,11 @@ export default {
         { label: 'Within 30 days', value: 30 },
       ],
       optionTopN: [
-        { label: 'Top3', value: 3 },
-        { label: 'Top5', value: 5 },
-        { label: 'Top6', value: 6 },
-        { label: 'Top8', value: 8 },
-        { label: 'Top10', value: 10 },
+        { label: 'Top 3', value: 3 },
+        { label: 'Top 5', value: 5 },
+        { label: 'Top 6', value: 6 },
+        { label: 'Top 8', value: 8 },
+        { label: 'Top 10', value: 10 },
       ],
       selectDays: 7,
       topNum: 6,
@@ -398,7 +399,7 @@ export default {
               var result = res.data.data;
               this.topPathData.yAxis.data = result.map(t => t.name).reverse()
               this.topPathData.series[0].data = result.map(t => t.count).reverse()
-              this.topPathData.title.text = 'TOP' + this.topNum + ' APIs'
+              this.topPathData.title.text = 'TOP ' + this.topNum + ' APIs'
               this.topPathChart.setOption(this.topPathData, true);
             }
           }
@@ -411,7 +412,7 @@ export default {
               var result = res.data.data;
               this.topAppData.yAxis.data = result.map(t => t.name).reverse()
               this.topAppData.series[0].data = result.map(t => t.count).reverse()
-              this.topAppData.title.text = 'TOP' + this.topNum + ' Applications'
+              this.topAppData.title.text = 'TOP ' + this.topNum + ' Applications'
               this.topAppChart.setOption(this.topAppData, true);
             }
           }
@@ -424,7 +425,7 @@ export default {
               var result = res.data.data;
               this.topAddrData.yAxis.data = result.map(t => t.name).reverse()
               this.topAddrData.series[0].data = result.map(t => t.count).reverse()
-              this.topAddrData.title.text = 'TOP' + this.topNum + ' Addresses'
+              this.topAddrData.title.text = 'TOP ' + this.topNum + ' Addresses'
               this.topAddrChart.setOption(this.topAddrData, true);
             }
           }
@@ -454,7 +455,8 @@ export default {
 
 <style scoped>
 .dashbord {
-  background-color: #f0f3f4;
+  background-color: transparent;
+  padding: 20px;
 }
 
 .color-green1 {
@@ -469,21 +471,30 @@ export default {
 .color-green2 {
   color: #34bfa3 !important;
 }
-.dashbord {
-  background-color: #f0f3f4;
-}
 
 .infoCrads {
-  margin: 20px 20px 20px 20px;
+  margin: 0 0 20px 0;
 }
 
 .infoCrads .el-col {
-  padding: 10px 20px;
+  padding: 10px;
 }
 
 .infoCrads .el-col .cardItem {
   height: 128px;
   background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px;
+}
+
+.infoCrads .el-col .cardItem:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
 }
 
 .cardItem {
@@ -491,53 +502,98 @@ export default {
 }
 
 .cardItem .cardItem_txt {
-  float: left;
-  margin: 26px 0 0 20px;
+  flex: 1;
 }
 
 .cardItem .cardItem_txt .cardItem_p0 {
-  font-size: 20px;
-  margin: 26px 0 0 20px;
+  font-size: 32px;
+  font-weight: 700;
+  margin: 0 0 8px 0;
+  line-height: 1.2;
 }
 
 .cardItem .cardItem_txt .cardItem_p1 {
-  font-size: 20px;
-  margin: 26px 0 0 20px;
+  font-size: 14px;
+  margin: 0;
+  color: #999;
+  font-weight: 500;
 }
 
 .cardItem .cardItem_icon {
   font-size: 64px;
   font-weight: bold;
+  opacity: 0.8;
 }
 
 #barChart {
-  width: 95%;
+  width: 100%;
   height: 300px;
-  box-shadow: 1px 3px 3px #f0eeee;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   padding: 20px;
 }
 #pieChart {
-  width: 95%;
+  width: 100%;
   height: 300px;
-  box-shadow: 1px 3px 3px #f0eeee;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   padding: 20px;
 }
 #topPathChart {
-  width: 95%;
+  width: 100%;
   height: 300px;
-  box-shadow: 2px 3px 3px #f0eeee;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   padding: 20px;
 }
 #topAppChart {
-  width: 95%;
+  width: 100%;
   height: 300px;
-  box-shadow: 2px 3px 3px #f0eeee;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   padding: 20px;
 }
 #topAddrChart {
-  width: 95%;
+  width: 100%;
   height: 300px;
-  box-shadow: 2px 3px 3px #f0eeee;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   padding: 20px;
+}
+
+.box-card {
+  margin-top: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+}
+
+.box-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.box-card .el-card__header {
+  padding: 18px 20px;
+  background-color: #fafafa;
+  border-bottom: 1px solid #ebeef5;
+}
+
+.box-card .el-card__body {
+  padding: 20px;
+}
+
+.page-title {
+  text-align: center;
+  font-size: 18px;
+  font-weight: bold;
+  color: #606266;
+  padding: 15px 0;
+  margin-bottom: 10px;
+  text-transform: uppercase;
 }
 </style>

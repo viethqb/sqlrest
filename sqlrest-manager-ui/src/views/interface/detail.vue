@@ -1,6 +1,9 @@
 <template>
-  <common :isOnlyShowDetail="true">
-  </common>
+  <div>
+    <h1 class="page-title">VIEW API</h1>
+    <common :isOnlyShowDetail="true">
+    </common>
+  </div>
 </template>
 
 <script>

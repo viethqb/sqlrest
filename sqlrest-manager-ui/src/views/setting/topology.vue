@@ -1,7 +1,9 @@
 ```vue
 <template>
-  <div class="topology-container"
-       :style="{ backgroundColor: backgroundColor }">
+  <div>
+    <h1 class="page-title">TOPOLOGY</h1>
+    <div class="topology-container"
+         :style="{ backgroundColor: backgroundColor }">
     <div class="header">
       <div class="legend-item">
         <div class="legend-color manager-color"></div>
@@ -30,6 +32,7 @@
     <div class="topology-content">
       <div id="topology-chart"
            ref="topologyChart"></div>
+    </div>
     </div>
   </div>
 </template>

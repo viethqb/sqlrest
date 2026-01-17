@@ -1,5 +1,6 @@
 <template>
   <div>
+    <h1 class="page-title">API CONFIG</h1>
     <el-card>
       <div class="assignment-list-top">
         <div class="left-search-input-group">
@@ -11,7 +12,7 @@
               <el-radio-button :label="true">Online</el-radio-button>
             </el-radio-group>
             <el-select v-model="groupId"
-                       size="mini"
+                       size="small"
                        :clearable="true"
                        style="width:15%"
                        placeholder="Select Authorization Group">
@@ -21,7 +22,7 @@
                          :value="item.id"></el-option>
             </el-select>
             <el-select v-model="moduleId"
-                       size="mini"
+                       size="small"
                        :clearable="true"
                        style="width:15%"
                        placeholder="Please select module">
@@ -31,7 +32,7 @@
                          :value="item.id"></el-option>
             </el-select>
             <el-select v-model="open"
-                       size="mini"
+                       size="small"
                        :clearable="true"
                        style="width:10%"
                        placeholder="Public">
@@ -43,15 +44,14 @@
                          :value=false></el-option>
             </el-select>
             <el-input placeholder="Name search"
-                      size="mini"
+                      size="small"
                       v-model="keyword"
                       :clearable=true
                       style="width:15%"
                       @change="searchByKeyword">
             </el-input>
             <el-button type="primary"
-                       size="mini"
-                       icon="el-icon-search"
+                       size="small"
                        @click="handleSearch">Search</el-button>
             <el-switch v-model="apiDocStatus"
                        name="Swagger Documentation Switch"
@@ -66,40 +66,40 @@
             </el-switch>
           </div>
         </div>
-        <el-button type="warning"
-                   size="mini"
-                   :disabled="isSelected"
-                   plain
-                   icon="el-icon-download"
-                   @click="handleBatchExport">Export APIs</el-button>
-        <el-upload :action="uploadAssignmentPath"
-                   accept="application/json"
-                   :http-request="handleFileUpload"
-                   v-if="!online"
-                   :multiple="false"
-                   :show-file-list="false"
-                   :auto-upload="true">
+        <div class="right-add-button-group">
           <el-button type="warning"
-                     size="mini"
+                     size="small"
+                     :disabled="isSelected"
                      plain
+                     icon="el-icon-download"
+                     @click="handleBatchExport">Export APIs</el-button>
+          <el-upload :action="uploadAssignmentPath"
+                     accept="application/json"
+                     :http-request="handleFileUpload"
                      v-if="!online"
-                     icon="el-icon-upload2">Import APIs</el-button>
-        </el-upload>
-        <el-button type="warning"
-                   size="mini"
-                   :disabled="apiDocStatus==false"
-                   v-if="online"
-                   icon="el-icon-document-add"
-                   @click="openOnlineApiDoc">Online Documentation</el-button>
-        <el-button type="primary"
-                   size="mini"
-                   v-if="!online"
-                   icon="el-icon-document-add"
-                   @click="handleCreate">New API</el-button>
+                     :multiple="false"
+                     :show-file-list="false"
+                     :auto-upload="true">
+            <el-button type="warning"
+                       size="small"
+                       plain
+                       v-if="!online"
+                       icon="el-icon-upload2">Import APIs</el-button>
+          </el-upload>
+          <el-button type="warning"
+                     size="small"
+                     :disabled="apiDocStatus==false"
+                     v-if="online"
+                     icon="el-icon-document-add"
+                     @click="openOnlineApiDoc">Online Documentation</el-button>
+          <el-button type="primary"
+                     size="small"
+                     v-if="!online"
+                     @click="handleCreate">New API</el-button>
+        </div>
       </div>
 
-      <el-table :header-cell-style="{background:'#eef1f6',color:'#606266'}"
-                :data="tableData"
+      <el-table :data="tableData"
                 size="small"
                 @selection-change="handleSelectionChange"
                 border>
@@ -124,7 +124,7 @@
                          min-width="20%">
           <template slot-scope="scope">
             <el-tag size="medium"
-                    class="name-wrapper-tag">{{ scope.row.method }}</el-tag>
+                    class="name-wrapper-tag method-tag">{{ scope.row.method }}</el-tag>
             {{ scope.row.path }}
           </template>
         </el-table-column>
@@ -135,12 +135,12 @@
         <el-table-column prop="groupName"
                          label="Authorization Group"
                          show-overflow-tooltip
-                         min-width="10%"></el-table-column>
+                         min-width="15%"></el-table-column>
         <el-table-column label="Engine"
                          min-width="10%">
           <template slot-scope="scope">
             <el-tag size="medium"
-                    class="name-wrapper-tag">{{ scope.row.engine }}</el-tag>
+                    class="name-wrapper-tag method-tag">{{ scope.row.engine }}</el-tag>
           </template>
         </el-table-column>
         <el-table-column prop="status"
@@ -165,38 +165,33 @@
                          label="Create Time"
                          min-width="18%"></el-table-column>
         <el-table-column label="Actions"
-                         min-width="40%">
+                         min-width="25%">
           <template slot-scope="scope">
-            <el-button-group>
-              <el-button size="small"
-                         type="primary"
-                         icon="el-icon-timer"
-                         v-if="scope.row.status===false"
-                         @click="handleOnline(scope.$index, scope.row)"
-                         round>Deploy</el-button>
-              <el-button size="small"
-                         type="info"
-                         icon="el-icon-delete-location"
-                         v-if="scope.row.status===true"
-                         @click="handleOffline(scope.$index, scope.row)"
-                         round>Retire</el-button>
-              <el-button size="small"
-                         type="warning"
-                         icon="el-icon-edit"
-                         @click="handleUpdate(scope.$index, scope.row)"
-                         round>Edit</el-button>
-              <el-button size="small"
-                         type="success"
-                         icon="el-icon-position"
-                         @click="handlePublish(scope.$index, scope.row)"
-                         round>Publish</el-button>
-              <el-button size="small"
-                         type="danger"
-                         icon="el-icon-delete"
-                         v-if="scope.row.status===false"
-                         @click="handleDelete(scope.$index, scope.row)"
-                         round>Delete</el-button>
-            </el-button-group>
+            <el-tooltip content="Deploy" placement="top" effect="dark" v-if="scope.row.status===false">
+              <el-button plain size="mini" type="primary" @click="handleOnline(scope.$index, scope.row)" circle>
+                <i class="el-icon-timer"></i>
+              </el-button>
+            </el-tooltip>
+            <el-tooltip content="Retire" placement="top" effect="dark" v-if="scope.row.status===true">
+              <el-button plain size="mini" type="info" @click="handleOffline(scope.$index, scope.row)" circle>
+                <i class="el-icon-delete-location"></i>
+              </el-button>
+            </el-tooltip>
+            <el-tooltip content="Edit" placement="top" effect="dark">
+              <el-button plain size="mini" type="warning" @click="handleUpdate(scope.$index, scope.row)" circle>
+                <i class="el-icon-edit"></i>
+              </el-button>
+            </el-tooltip>
+            <el-tooltip content="Publish" placement="top" effect="dark">
+              <el-button plain size="mini" type="success" @click="handlePublish(scope.$index, scope.row)" circle>
+                <i class="el-icon-position"></i>
+              </el-button>
+            </el-tooltip>
+            <el-tooltip content="Delete" placement="top" effect="dark" v-if="scope.row.status===false">
+              <el-button plain size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)" circle>
+                <i class="el-icon-delete"></i>
+              </el-button>
+            </el-tooltip>
           </template>
         </el-table-column>
       </el-table>
@@ -242,10 +237,9 @@
                :showClose="false"
                width="40%"
                :before-close="handleClose">
-      <el-table :header-cell-style="{background:'#eef1f6',color:'#606266'}"
-                :data="versions"
+      <el-table :data="versions"
                 highlight-current-row
-                size="mini"
+                size="small"
                 border>
         <template slot="empty">
           <span>Version list is empty, please click "Publish" button to publish a version</span>
@@ -762,22 +756,40 @@ export default {
   width: 100%;
   display: flex;
   justify-content: space-between;
-  padding: 5px;
+  align-items: center;
+  padding: 10px 5px;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
 .left-search-input-group {
-  width: calc(100% - 100px);
+  width: calc(100% - 200px);
   margin-right: auto;
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
 }
+
 .left-search-input {
   margin-right: auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
 }
+
 .right-add-button-group {
-  width: 100px;
+  width: auto;
   margin-left: auto;
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.method-tag {
+  font-weight: bold !important;
 }
 </style>

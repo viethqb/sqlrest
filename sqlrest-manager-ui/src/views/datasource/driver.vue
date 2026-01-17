@@ -1,41 +1,42 @@
 <template>
   <div>
+    <h1 class="page-title">DRIVER CONFIG</h1>
     <el-card>
       <div class="container">
-        <el-card class="box-card">
-          <div slot="header"
-               align="center"
-               class="clearfix">
-            <span><b>Database Type List</b></span>
-          </div>
+        <div class="leftSection">
           <div class="navsBox">
-            <ul>
-              <li v-for="(item,index) in connectionTypes"
-                  :key="index"
-                  @click="handleChooseClick(item.type,index)"
-                  :class="{active:index==isActive}">
-                  <databaseIcon :type="item.type"></databaseIcon>
-                  [{{item.id}}]{{item.type}}</li>
-            </ul>
+            <div class="sectionTitle">
+              <span><b>Database Type List</b></span>
+            </div>
+            <el-select 
+              v-model="selectedDatabaseType"
+              filterable
+              placeholder="Search database type..."
+              @change="handleDatabaseTypeChange"
+              style="width: 100%; margin-top: 10px;">
+              <el-option
+                v-for="(item, index) in connectionTypes"
+                :key="index"
+                :label="formatDatabaseName(item.type)"
+                :value="item.type">
+              </el-option>
+            </el-select>
           </div>
-        </el-card>
+        </div>
 
         <div class="contentBox">
           <div align="right"
                style="margin:10px 5px;"
                width="95%">
             <el-button type="primary"
-                       size="mini"
-                       icon="el-icon-document-add"
+                       size="small"
                        @click="dialogVisible=true">Add</el-button>
           </div>
-          <el-table :header-cell-style="{background:'#eef1f6',color:'#606266'}"
-                    :data="versionDrivers"
+          <el-table :data="versionDrivers"
                     size="small"
-                    stripe
                     border>
             <template slot="empty">
-              <span>Click on the database type on the left to view corresponding driver version information</span>
+              <span>Please select a database type to view corresponding driver version information</span>
             </template>
             <el-table-column property="driverVersion"
                              label="Driver Version"
@@ -69,7 +70,6 @@
 </template>
 
 <script>
-import databaseIcon from "@/components/databaseIcon/databaseIcon";
 export default {
   data () {
     return {
@@ -78,12 +78,15 @@ export default {
       connectionTypes: [],
       versionDrivers: [],
       isActive: -1,
+      selectedDatabaseType: null,
     };
   },
-  components: {
-    databaseIcon
-  },
   methods: {
+    formatDatabaseName: function (type) {
+      if (!type) return '';
+      // Convert to lowercase, then capitalize first letter
+      return type.charAt(0).toUpperCase() + type.slice(1).toLowerCase();
+    },
     loadConnectionTypes: function () {
       this.$http({
         method: "GET",
@@ -91,7 +94,11 @@ export default {
       }).then(res => {
         if (0 === res.data.code) {
           this.connectionTypes = res.data.data;
-          this.handleChooseClick('MYSQL', 0);
+          if (this.connectionTypes.length > 0) {
+            const firstType = this.connectionTypes[0].type;
+            this.selectedDatabaseType = firstType;
+            this.handleChooseClick(firstType, 0);
+          }
         } else {
           if (res.data.message) {
             alert("Failed to initialize database type information: " + res.data.message);
@@ -102,6 +109,17 @@ export default {
     },
     handleChooseClick: function (type, index) {
       this.isActive = index;
+      this.selectedDatabaseType = type;
+      this.loadDriverVersions(type);
+    },
+    handleDatabaseTypeChange: function (type) {
+      if (type) {
+        const index = this.connectionTypes.findIndex(item => item.type === type);
+        this.isActive = index >= 0 ? index : -1;
+        this.loadDriverVersions(type);
+      }
+    },
+    loadDriverVersions: function (type) {
       this.$http.get(
         "/sqlrest/manager/api/v1/datasource/" + type + "/drivers"
       ).then(res => {
@@ -135,13 +153,6 @@ export default {
 </script>
 
 <style scoped>
-.el-card,
-.el-message {
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-}
-
 .el-table {
   width: 100%;
   border-collapse: collapse;
@@ -168,48 +179,39 @@ export default {
 
 .container {
   display: flex;
-  height: 100%;
+  gap: 20px;
 }
 
-.container > * {
-  float: left; /* Horizontal layout */
+.container .leftSection {
+  width: 25%;
+  min-width: 250px;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  align-items: flex-start;
 }
 
-.container .el-card {
-  width: 20%;
-  height: 100%;
-  overflow: auto;
-}
-
-.container .el-card__header {
-  padding: 8px 10px;
-  border-bottom: 1px solid #ebeef5;
-  box-sizing: border-box;
-}
-
-.container .navsBox ul {
-  margin: 0;
-  padding-left: 10px;
-}
-
-.container .navsBox ul li {
-  list-style: none;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrop;
-  cursor: pointer; /* Change cursor to pointer on hover */
-  padding: 10px 0;
-  border-bottom: 1px solid #e0e0e0;
+.container .navsBox {
+  padding: 0;
+  margin-top: 42px; /* Align with table header (button margin + button height) */
   width: 100%;
 }
 
-.container .navsBox .active {
-  background: #bcbcbe6e;
-  color: rgb(46, 28, 88);
+.container .leftSection .sectionTitle {
+  padding: 0;
+  text-align: left;
+  font-size: 14px;
+  color: #606266;
+  font-weight: 500;
 }
 
 .container .contentBox {
   padding: 10px;
-  width: calc(100% - 250px);
+  flex: 1;
+  min-width: 0;
+}
+
+.container .contentBox > div:first-child {
+  margin-bottom: 10px;
 }
 </style>

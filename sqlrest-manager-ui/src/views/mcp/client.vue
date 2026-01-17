@@ -1,28 +1,27 @@
 <template>
   <div>
+    <h1 class="page-title">TOKEN CONFIG</h1>
     <el-card>
       <div class="group-list-top">
         <div class="left-search-input-group">
           <div class="left-search-input">
             <el-input placeholder="Name search"
-                      size="mini"
+                      size="small"
                       v-model="searchText"
                       :clearable=true
-                      style="width:300px"
+                      style="width:400px"
                       @change="searchByKeyword">
             </el-input>
           </div>
         </div>
         <div class="right-add-button-group">
           <el-button type="primary"
-                     size="mini"
-                     icon="el-icon-document-add"
+                     size="small"
                      @click="addGroup">Add</el-button>
         </div>
       </div>
 
-      <el-table :header-cell-style="{background:'#eef1f6',color:'#606266'}"
-                :data="tableData"
+      <el-table :data="tableData"
                 size="small"
                 border>
         <el-table-column prop="id"
@@ -40,25 +39,23 @@
                          show-overflow-tooltip
                          min-width="20%"></el-table-column>
         <el-table-column label="Actions"
-                         min-width="35%">
+                         min-width="20%">
           <template slot-scope="scope">
-            <el-button-group>
-              <el-button size="small"
-                         type="danger"
-                         icon="el-icon-document"
-                         @click="handleShowToken(scope.$index, scope.row)"
-                         round>View</el-button>
-              <el-button size="small"
-                         type="warning"
-                         icon="el-icon-edit"
-                         @click="handleUpdate(scope.$index, scope.row)"
-                         round>Edit</el-button>
-              <el-button size="small"
-                         type="success"
-                         icon="el-icon-delete"
-                         @click="handleDelete(scope.$index, scope.row)"
-                         round>Delete</el-button>
-            </el-button-group>
+            <el-tooltip content="View" placement="top" effect="dark">
+              <el-button plain size="mini" type="info" @click="handleShowToken(scope.$index, scope.row)" circle>
+                <i class="el-icon-view"></i>
+              </el-button>
+            </el-tooltip>
+            <el-tooltip content="Edit" placement="top" effect="dark">
+              <el-button plain size="mini" type="warning" @click="handleUpdate(scope.$index, scope.row)" circle>
+                <i class="el-icon-edit"></i>
+              </el-button>
+            </el-tooltip>
+            <el-tooltip content="Delete" placement="top" effect="dark">
+              <el-button plain size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)" circle>
+                <i class="el-icon-delete"></i>
+              </el-button>
+            </el-tooltip>
           </template>
         </el-table-column>
       </el-table>
@@ -129,7 +126,7 @@
                  :showClose="false"
                  :before-close="handleClose">
         <el-form :model="createform"
-                 size="mini"
+                 size="small"
                  status-icon
                  :rules="rules"
                  ref="createform">
@@ -139,6 +136,7 @@
                         prop="name"
                         style="width:85%">
             <el-input v-model="createform.name"
+                      size="small"
                       auto-complete="off"></el-input>
           </el-form-item>
         </el-form>
@@ -155,7 +153,7 @@
                  :showClose="false"
                  :before-close="handleClose">
         <el-form :model="updateform"
-                 size="mini"
+                 size="small"
                  status-icon
                  :rules="rules"
                  ref="updateform">
@@ -165,6 +163,7 @@
                         prop="name"
                         style="width:85%">
             <el-input v-model="updateform.name"
+                      size="small"
                       auto-complete="off"></el-input>
           </el-form-item>
         </el-form>

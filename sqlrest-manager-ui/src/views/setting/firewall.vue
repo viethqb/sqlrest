@@ -1,8 +1,9 @@
 <template>
   <div>
+    <h1 class="page-title">FIREWALL IP</h1>
     <el-card>
       <el-form label-width="200px">
-        <el-form-item label="Access Control">
+        <el-form-item label="Firewall IP">
           <el-switch v-model="status"
                      active-color="#13ce66"
                      active-value="ON"
@@ -99,7 +100,7 @@ export default {
         })
       }).then(res => {
         if (0 === res.data.code) {
-          this.$alert("Access control saved successfully", "Information",
+          this.$alert("Firewall IP saved successfully", "Information",
             {
               confirmButtonText: "OK",
               type: "info"

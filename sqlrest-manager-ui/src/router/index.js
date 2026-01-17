@@ -62,7 +62,7 @@ const constantRouter = new Router({
             },
             {
               path: '/setting/firewall',
-              name: 'Access Control',
+              name: 'Firewall IP',
               icon: "el-icon-notebook-2",
               component: () => import('@/views/setting/firewall')
             },

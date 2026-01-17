@@ -1,5 +1,7 @@
 <template>
-  <el-card>
+  <div>
+    <h1 class="page-title">API DETAILS</h1>
+    <el-card>
     <div class="container">
       <div>
         <el-button type="primary"
@@ -13,79 +15,79 @@
         <el-tab-pane label="API Definition">
           <el-row class="detail-row">
             <el-col :span="4">
-              <i class="el-icon-key">Current Version:</i>
+              <span class="detail-label">Current Version:</span>
             </el-col>
             <el-col :span="20">
-              <el-tag size="small">V{{interfaceDetail.version}}</el-tag>
-              <el-button size="small"
-                         type="danger"
-                         icon="el-icon-timer"
-                         @click="handleSwitchVersion(interfaceDetail)"
-                         round>Switch</el-button>
+              <el-tag size="medium">V{{interfaceDetail.version}}</el-tag>
+              <el-tooltip content="Switch Version" placement="top" effect="dark">
+                <el-button plain size="mini" type="danger" @click="handleSwitchVersion(interfaceDetail)" circle>
+                  <i class="el-icon-switch-button"></i>
+                </el-button>
+              </el-tooltip>
             </el-col>
           </el-row>
           <el-row class="detail-row">
             <el-col :span="4">
-              <i class="el-icon-mic">CommitId:</i>
+              <span class="detail-label">CommitId:</span>
             </el-col>
             <el-col :span="20">
-              <el-tag size="small">{{interfaceDetail.commitId}}</el-tag>
+              <span class="detail-value">{{interfaceDetail.commitId}}</span>
             </el-col>
           </el-row>
           <el-row class="detail-row">
             <el-col :span="4">
-              <i class="el-icon-user">API Name:</i>
+              <span class="detail-label">API Name:</span>
             </el-col>
             <el-col :span="20">
-              <el-tag size="small">{{interfaceDetail.name}}</el-tag>
+              <span class="detail-value">{{interfaceDetail.name}}</span>
             </el-col>
           </el-row>
           <el-row class="detail-row">
             <el-col :span="4">
-              <i class="el-icon-attract">API Path:</i>
+              <span class="detail-label">API Path:</span>
             </el-col>
             <el-col :span="20">
-              <el-tag size="small"
-                      type="danger">{{interfaceDetail.method}}</el-tag>
-              <el-tag size="small"
-                      type="warning">{{interfaceDetail.path}}</el-tag>
+              <el-tag size="medium"
+                      type="danger"
+                      class="method-tag">{{interfaceDetail.method}}</el-tag>
+              <span class="detail-value" style="margin-left: 10px;">{{interfaceDetail.path}}</span>
             </el-col>
           </el-row>
           <el-row class="detail-row">
             <el-col :span="4">
-              <i class="el-icon-tickets">Request Type:</i>
+              <span class="detail-label">Request Type:</span>
             </el-col>
             <el-col :span="20">
-              <el-tag size="small"
-                      type="success">{{interfaceDetail.contentType}}</el-tag>
+              <span class="detail-value">{{interfaceDetail.contentType}}</span>
             </el-col>
           </el-row>
           <el-row class="detail-row">
             <el-col :span="4">
-              <i class="el-icon-s-check">Authentication:</i>
+              <span class="detail-label">Authentication:</span>
             </el-col>
             <el-col :span="20">
-              <el-tag size="small"
-                      type="danger">{{boolTypeFormat(!interfaceDetail.open)}}</el-tag>
+              <el-tooltip :content="boolTypeFormat(!interfaceDetail.open)" placement="top" effect="dark">
+                <el-button plain size="mini" :type="interfaceDetail.open ? 'success' : 'danger'" circle>
+                  <i :class="interfaceDetail.open ? 'el-icon-unlock' : 'el-icon-lock'"></i>
+                </el-button>
+              </el-tooltip>
             </el-col>
           </el-row>
           <el-row class="detail-row">
             <el-col :span="4">
-              <i class="el-icon-help">Description:</i>
+              <span class="detail-label">Description:</span>
             </el-col>
             <el-col :span="20">
-              <el-tag size="small"
-                      type="info">{{interfaceDetail.description}}</el-tag>
+              <span class="detail-value">{{interfaceDetail.description}}</span>
             </el-col>
           </el-row>
           <el-row class="detail-row">
             <el-col :span="4">
-              <i class="el-icon-postcard">Request Parameters:</i>
+              <span class="detail-label">Request Parameters:</span>
             </el-col>
             <el-col :span="20">
               <el-table :data="interfaceDetail.inputParams"
-                        :header-cell-style="{background:'#eef1f6',color:'#606266'}"
-                        size="mini"
+                        size="small"
                         default-expand-all
                         row-key="id"
                         :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
@@ -93,46 +95,60 @@
                 <template slot="empty">
                   <span>Request parameters are empty</span>
                 </template>
-                <el-table-column label="Parameter Name"
-                                 prop="name"
-                                 min-width="40%">
+                <el-table-column min-width="18%">
+                  <template slot="header">
+                    <span style="white-space: nowrap;">Param Name</span>
+                  </template>
+                  <template slot-scope="scope">
+                    {{scope.row.name}}
+                  </template>
                 </el-table-column>
-                <el-table-column label="Parameter Location"
-                                 prop="location"
-                                 min-width="15%">
+                <el-table-column min-width="14%">
+                  <template slot="header">
+                    <span style="white-space: nowrap;">Param Location</span>
+                  </template>
                   <template slot-scope="scope">
                     {{enumTypeLocationFormat(scope.row.location)}}
                   </template>
                 </el-table-column>
-                <el-table-column label="Parameter Type"
-                                 prop="type"
-                                 min-width="15%">
+                <el-table-column min-width="14%">
+                  <template slot="header">
+                    <span style="white-space: nowrap;">Param Type</span>
+                  </template>
                   <template slot-scope="scope">
                     {{enumTypeValueFormat(scope.row.type)}}
                   </template>
                 </el-table-column>
-                <el-table-column label="Array"
-                                 min-width="15%">
+                <el-table-column min-width="10%"
+                                 align="center">
+                  <template slot="header">
+                    <span style="white-space: nowrap;">Array</span>
+                  </template>
                   <template slot-scope="scope">
                     {{boolTypeFormat(scope.row.isArray)}}
                   </template>
                 </el-table-column>
-                <el-table-column label="Required"
-                                 min-width="15%">
+                <el-table-column min-width="10%"
+                                 align="center">
+                  <template slot="header">
+                    <span style="white-space: nowrap;">Required</span>
+                  </template>
                   <template slot-scope="scope">
                     {{boolTypeFormat(scope.row.required)}}
                   </template>
                 </el-table-column>
-                <el-table-column label="Default Value"
-                                 prop="defaultValue"
-                                 min-width="20%">
+                <el-table-column min-width="15%">
+                  <template slot="header">
+                    <span style="white-space: nowrap;">Default Value</span>
+                  </template>
                   <template slot-scope="scope">
                     {{scope.row.defaultValue}}
                   </template>
                 </el-table-column>
-                <el-table-column label="Description"
-                                 prop="remark"
-                                 min-width="25%">
+                <el-table-column min-width="19%">
+                  <template slot="header">
+                    <span style="white-space: nowrap;">Description</span>
+                  </template>
                   <template slot-scope="scope">
                     {{scope.row.remark}}
                   </template>
@@ -142,12 +158,11 @@
           </el-row>
           <el-row class="detail-row">
             <el-col :span="4">
-              <i class="el-icon-chat-line-round">Response Parameters:</i>
+              <span class="detail-label">Response Parameters:</span>
             </el-col>
             <el-col :span="20">
               <el-table :data="interfaceDetail.outputParams"
-                        :header-cell-style="{background:'#eef1f6',color:'#606266'}"
-                        size="mini"
+                        size="small"
                         default-expand-all
                         row-key="id"
                         :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
@@ -155,18 +170,26 @@
                 <template slot="empty">
                   <span>Response parameters are empty</span>
                 </template>
-                <el-table-column label="Parameter Name"
-                                 prop="name"
-                                 min-width="25%">
+                <el-table-column min-width="30%">
+                  <template slot="header">
+                    <span style="white-space: nowrap;">Param Name</span>
+                  </template>
+                  <template slot-scope="scope">
+                    {{scope.row.name}}
+                  </template>
                 </el-table-column>
-                <el-table-column label="Parameter Type"
-                                 min-width="25%">
+                <el-table-column min-width="30%">
+                  <template slot="header">
+                    <span style="white-space: nowrap;">Param Type</span>
+                  </template>
                   <template slot-scope="scope">
                     {{enumTypeValueFormat(scope.row.type)}}
                   </template>
                 </el-table-column>
-                <el-table-column label="Description"
-                                 min-width="25%">
+                <el-table-column min-width="40%">
+                  <template slot="header">
+                    <span style="white-space: nowrap;">Description</span>
+                  </template>
                   <template slot-scope="scope">
                     {{scope.row.remark}}
                   </template>
@@ -176,8 +199,7 @@
           </el-row>
         </el-tab-pane>
         <el-tab-pane label="Access Log">
-          <el-table :header-cell-style="{background:'#eef1f6',color:'#606266'}"
-                    :data="accessLogData"
+          <el-table :data="accessLogData"
                     size="small"
                     border>
             <el-table-column prop="createTime"
@@ -281,10 +303,9 @@
                :showClose="false"
                width="40%"
                :before-close="handleClose">
-      <el-table :header-cell-style="{background:'#eef1f6',color:'#606266'}"
-                :data="versionList"
+      <el-table :data="versionList"
                 highlight-current-row
-                size="mini"
+                size="small"
                 border>
         <template slot="empty">
           <span>Version list is empty, please click "Publish" button to publish a version</span>
@@ -313,6 +334,7 @@
     </el-dialog>
 
   </el-card>
+  </div>
 </template>
 
 <script>
@@ -578,8 +600,21 @@ export default {
 }
 
 .detail-row {
-  font-size: 13px;
-  padding: 2px;
+  font-size: 15px;
+  padding: 8px 2px;
+}
+
+.detail-label {
+  font-weight: 500;
+  color: #606266;
+}
+
+.detail-value {
+  color: #303133;
+}
+
+.method-tag {
+  font-weight: bold;
 }
 
 .btn-style {
